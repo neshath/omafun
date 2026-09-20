@@ -7,7 +7,7 @@ export const button=(text,fn,className='')=>{const b=node('button',className,tex
 export function field(parent,label,value,change,options={}){
  const wrap=node('label','field'),name=node('span','',label),input=document.createElement(options.choices?'select':options.multiline?'textarea':'input');
  if(options.choices)for(const entry of options.choices){const [key,text]=Array.isArray(entry)?entry:[entry,entry];const opt=node('option','',text);opt.value=key;input.append(opt);}
- else input.type=options.type||(typeof value==='boolean'?'checkbox':typeof value==='number'?'number':'text');
+ else if(!options.multiline)input.type=options.type||(typeof value==='boolean'?'checkbox':typeof value==='number'?'number':'text');
  if(input.type==='checkbox')input.checked=value;else input.value=value??'';
  for(const key of ['min','max','step','placeholder','maxLength'])if(options[key]!==undefined)input[key]=options[key];
  input.onchange=()=>{if(input.validity&&!input.validity.valid){input.reportValidity();return;}change(input.type==='checkbox'?input.checked:input.type==='number'?Number(input.value):input.value);};

@@ -6,6 +6,12 @@ export function mountWorkbench(api){
  const css=document.createElement('link');css.rel='stylesheet';css.href='workbench.css';document.head.append(css);
  const panels=createPanels(api),market=createMarketplace(api),editor=createEditorTools(api);
  const tabs=document.querySelector('.asset-tabs'),workspace=document.querySelector('.workspace');
+ const inspect=document.createElement('button');inspect.textContent='◈ Inspector';inspect.className='mobile-inspector';inspect.setAttribute('aria-expanded','false');
+ inspect.onclick=()=>{const open=document.body.classList.toggle('inspector-open');inspect.setAttribute('aria-expanded',String(open));};
+ document.querySelector('.workspace-modes').append(inspect);
+ const close=document.createElement('button');close.textContent='×';close.className='mobile-inspector';close.setAttribute('aria-label','Close inspector');
+ close.onclick=()=>{document.body.classList.remove('inspector-open');inspect.setAttribute('aria-expanded','false');};
+ document.querySelector('.inspector .panel-heading').append(close);
  for(const [id,label]of [['logic','⌘ Logic'],['market','✦ Market']]){
   const button=document.createElement('button');button.dataset.tab=id;button.textContent=label;
   button.onclick=()=>api.setTab(id);tabs.insertBefore(button,document.querySelector('#collapse'));

@@ -1,11 +1,11 @@
-import {clone,collisionAt} from './model.js';
+import {clone,collisionAt,palettes} from './model.js';
 import {drawScene} from './render.js';
 
 // No new module dependency: the HTML exporter strips these top-level imports.
 const runtimeOverlap=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
 const runtimeNumber=(v,f)=>v!==''&&v!=null&&Number.isFinite(Number(v))?Number(v):f;
 const runtimeHostile=e=>e.type==='enemy'||e.type==='boss';
-const runtimeOverhead=new Set(['topdown','beat-em-up','dungeon','puzzle','boss-arena']);
+const runtimeOverhead=new Set(['topdown','arcade','beat-em-up','dungeon','boss-arena']);
 
 export class Runtime {
   constructor(scene,projectData) {
@@ -30,7 +30,7 @@ export class Runtime {
     this.invincible=0;this.attack=0;this.attackCooldown=0;this.facing=1;this.aim={x:1,y:0};
     this.contacts=new Set();this.attackHits=new Set();this.sceneTime=0;this.pending=[];this.fired=new Set();this.timerNext=new Map();
     this.cameraTarget=null;this.shake=0;this.dialogue=null;this.message=null;this.boss=null;this.entryPending=true;this.won=false;
-    this.hazards=scene.layers.flatMap(l=>Object.entries(l.tiles||{}).filter(([,id])=>id===5).map(([key])=>{
+    this.hazards=scene.layers.flatMap(l=>Object.entries(l.tiles||{}).filter(([,id])=>id===5||id===16).map(([key])=>{
       const [x,y]=key.split(',').map(Number);return{x:x*16,y:y*16+5,w:16,h:11};
     }));
   }
@@ -70,7 +70,7 @@ export class Runtime {
       case 'camera':this.cameraTarget=target?.id||(value&&typeof value==='object'?value:null);break;
       case 'sound':this.notify('sound',{sound:value,sourceId:rule.targetId});break;
       case 'shake':this.shake=Math.max(0,runtimeNumber(value,.4));break;
-      case 'palette':if(['forest','ice','lava','city'].includes(value))this.scene.biome=value;break;
+      case 'palette':if(Object.hasOwn(palettes,value))this.scene.biome=value;break;
       case 'animation':if(target){target.animation=value;target.animationTime=this.elapsed;if(value==='hide')target.visible=false;if(value==='show')target.visible=true;if(value==='flip')target.flipX=!target.flipX;}break;
       case 'item':{
         const item=value&&typeof value==='object'?value:{id:rule.targetId||String(value),amount:1},amount=runtimeNumber(item.amount,1);
