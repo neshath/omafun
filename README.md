@@ -1,4 +1,4 @@
-# Pixel Forge
+# Omafun
 
 A dependency-free, local retro game creation studio. Built from the supplied master prompt's **required first playable slice**, using original hand-authored pixel motifs, tile patterns, characters, and scenery.
 
