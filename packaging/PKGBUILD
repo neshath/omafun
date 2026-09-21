@@ -1,0 +1,31 @@
+# Maintainer: Omafun contributors
+pkgname=omafun
+a_pkgname=omafun
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Local retro game creation studio'
+arch=('x86_64' 'aarch64')
+url='https://github.com/neshath/omafun'
+license=('MIT')
+depends=('webkit2gtk-4.1')
+makedepends=('git' 'nodejs' 'npm' 'rust')
+source=("git+${url}.git#commit=${OMAFUN_COMMIT:-main}")
+sha256sums=('SKIP')
+
+prepare() {
+  cd "${srcdir}/omafun"
+  npm install --ignore-scripts --no-audit --no-fund
+}
+
+build() {
+  cd "${srcdir}/omafun"
+  npm run desktop:build -- --no-bundle
+}
+
+package() {
+  cd "${srcdir}/omafun"
+  install -Dm755 src-tauri/target/release/omafun "${pkgdir}/usr/bin/omafun"
+  install -Dm644 packaging/omafun.desktop "${pkgdir}/usr/share/applications/omafun.desktop"
+  install -Dm644 src-tauri/icons/icon.png "${pkgdir}/usr/share/icons/hicolor/256x256/apps/omafun.png"
+  install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Omafun
+Comment=Retro game creation studio
+Exec=omafun
+Icon=omafun
+Terminal=false
+Type=Application
+Categories=Development;Game;
+Keywords=pixel;game;editor;retro;
+StartupWMClass=omafun
