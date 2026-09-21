@@ -5,6 +5,6 @@ Exec=omafun
 Icon=omafun
 Terminal=false
 Type=Application
-Categories=Development;Game;
+Categories=Game;Development;
 Keywords=pixel;game;editor;retro;
 StartupWMClass=omafun

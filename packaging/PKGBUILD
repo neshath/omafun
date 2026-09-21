@@ -1,6 +1,5 @@
 # Maintainer: Omafun contributors
 pkgname=omafun
-a_pkgname=omafun
 pkgver=0.1.0
 pkgrel=1
 pkgdesc='Local retro game creation studio'
@@ -14,7 +13,7 @@ sha256sums=('SKIP')
 
 prepare() {
   cd "${srcdir}/omafun"
-  npm install --ignore-scripts --no-audit --no-fund
+  npm install --ignore-scripts --no-audit --no-fund --include=dev
 }
 
 build() {

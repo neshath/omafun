@@ -22,7 +22,15 @@ The desktop build uses native open/save dialogs for projects and HTML exports. B
 
 ## Linux build requirements
 
-A Linux build needs Node.js, npm, Rust/Cargo, the Tauri system dependencies, and WebKitGTK 4.1. On Arch/Omarchy, install the relevant development packages before running `npm run desktop:build`; the exact system package names can vary with the installed Omarchy/Arch release. The resulting binaries are emitted under `src-tauri/target/release/` and bundled artifacts under `src-tauri/target/release/bundle/`.
+A Linux build needs Node.js, npm, Rust/Cargo, the Tauri system dependencies, and WebKitGTK 4.1. On Arch/Omarchy, install the baseline packages with:
+
+```sh
+sudo pacman -S --needed webkit2gtk-4.1 base-devel nodejs npm rust
+npm install
+npm run desktop:build
+```
+
+The exact package names can vary with the installed Omarchy/Arch release. If WebKit rendering is blank or corrupted, try launching with `WEBKIT_DISABLE_DMABUF_RENDERER=1 omafun`. The resulting binaries are emitted under `src-tauri/target/release/` and bundled artifacts under `src-tauri/target/release/bundle/`.
 
 The included `packaging/PKGBUILD` builds the embedded desktop binary and installs it with an application launcher and icon. It is intended as a starting point for an Arch/AUR-style package, not as a claim that the package has already been accepted into the Omarchy marketplace.
 

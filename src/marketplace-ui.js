@@ -14,10 +14,10 @@ export function createMarketplace(api){
   field(d,'Open-source license',m.license,v=>m.license=v,{choices:OPEN_LICENSES});
   if(p.upstream)d.append(node('p','empty-copy',`Remixed from ${p.upstream.author} · ${p.upstream.license}. Preserve all original license notices when sharing.`));
   const status=node('p','form-status');status.setAttribute('role','status');d.append(status);
-  d.append(button('↓ Export open-source package',()=>{try{
+  d.append(button('↓ Export open-source package',async()=>{try{
    if(p.upstream?.license==='GPL-3.0-only'&&m.license!=='GPL-3.0-only')throw Error('This remix must retain the original GPL-3.0-only license.');
    const listing=createListing(p,{...m,tags:m.tags.split(',').map(x=>x.trim()).filter(Boolean)});
-   api.checkpoint();p.share={...m};api.changed();api.download(JSON.stringify(listing,null,2),m.name.replace(/[^a-z0-9]+/gi,'-')+'.pixel-market.json');
+   api.checkpoint();p.share={...m};api.changed();await api.download(JSON.stringify(listing,null,2),m.name.replace(/[^a-z0-9]+/gi,'-')+'.pixel-market.json');
    library.import(listing);status.textContent='Package downloaded and saved to your library. It has not been published online.';api.note('Source-included game package exported.');render();
   }catch(e){status.textContent=e.message;}},'primary'));
   d.showModal();

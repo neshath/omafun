@@ -1,13 +1,13 @@
 # Omafun
 
-A dependency-free, local retro game creation studio. Built from the supplied master prompt's **required first playable slice**, using original hand-authored pixel motifs, tile patterns, characters, and scenery.
+A dependency-free, local retro game creation studio and open-source game exchange. Built from the supplied master prompt's **required first playable slice**, using original hand-authored pixel motifs, tile patterns, characters, and scenery. The exchange currently uses local packages and read-only HTTPS catalogs; it is not a hosted publishing service.
 
 ## Run
 
 Requires Node.js 20 or newer. No package installation is needed.
 
 ```sh
-cd /Users/tinkerspace/Documents/Codex/2026-09-20/bu/outputs/pixel-forge
+cd omafun
 npm start
 ```
 
@@ -38,9 +38,9 @@ The game runtime uses a separate scene copy. Enemies, pickups, deaths, and check
 
 ## Scope boundaries
 
-This is the first playable **platformer** slice, not the complete long-term editor roadmap. Top-down/arcade/beat-em-up controllers, visual event graphs, bosses, scene-transition logic, moving platforms, autotiling, audio, configurable HUDs, asset folders, multi-selection, custom shortcut remapping and native desktop packaging are not implemented. Water, ladder and lantern tiles are visual decorations; spikes deal damage. Custom sprites are editable/exportable assets but are not yet assignable to runtime entities. Camera width/height configure the runtime viewport; the camera position overlay is a composition guide, while playtest follows the player.
+This is the first playable **platformer** slice, not the complete long-term editor roadmap. Top-down/arcade/beat-em-up controllers, visual event graphs, bosses, scene-transition logic, moving platforms, autotiling, audio, configurable HUDs, asset folders, multi-selection and custom shortcut remapping are not implemented. Water, ladder and lantern tiles are visual decorations; spikes deal damage. Custom sprites are editable/exportable assets but are not yet assignable to runtime entities. Camera width/height configure the runtime viewport; the camera position overlay is a composition guide, while playtest follows the player.
 
-Save is a browser download, not a direct filesystem project directory. Autosave belongs to the current browser/origin and retains one latest project. Download a project file for durable backups or transferring between browsers. PNG sprite imports should be arranged as a grid with dimensions divisible by the selected frame size. Gamepad support is implemented but has not been verified on a physical controller.
+In browser mode, Save is a download rather than a direct filesystem project directory; the Tauri desktop build uses native file dialogs. Autosave belongs to the current browser/origin and retains one latest project. Download a project file for durable backups or transferring between browsers. PNG sprite imports should be arranged as a grid with dimensions divisible by the selected frame size. Gamepad support is implemented but has not been verified on a physical controller.
 
 ## Verification
 
