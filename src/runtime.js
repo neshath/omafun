@@ -65,7 +65,7 @@ export class Runtime {
         const template=value&&typeof value==='object'?value:target;
         if(template){const e=this.prepareEntity(clone(template));e.id=`${e.id||'spawn'}-${++this.sequence}`;e.dead=false;e.visible=true;this.scene.entities.push(e);}break;
       }
-      case 'dialogue':this.dialogue={text:String(value||target?.text||''),sourceId:target?.id||rule.targetId};this.notify('dialogue',this.dialogue);this.dispatch('dialogue',this.dialogue.sourceId,detail);break;
+      case 'dialogue':this.dialogue={text:String(value||target?.text||''),sourceId:target?.id||rule.targetId};this.notify('dialogue',this.dialogue);break;
       case 'message':this.message={text:String(value??''),until:this.sceneTime+4};this.notify('message',this.message);break;
       case 'camera':this.cameraTarget=target?.id||(value&&typeof value==='object'?value:null);break;
       case 'sound':this.notify('sound',{sound:value,sourceId:rule.targetId});break;
@@ -167,7 +167,8 @@ export class Runtime {
     this.previousJump=!!input.jump;this.updateEntities(dt);if(this.scene!==scene)return;
     const previousBottom=p.y+p.h,fallSpeed=this.vy;this.move(dt);
     if(input.attack&&this.attackCooldown<=0){this.attack=.18;this.attackCooldown=.28;this.attackHits.clear();this.dispatch('attack',p.id);if(this.scene!==scene)return;if(scene.gameType==='run-and-gun')this.shoot(p,true);this.notify('sound',{sound:'attack'});}
-    const interact=input.interact&&!this.previousInteract;this.previousInteract=!!input.interact;if(interact&&this.dialogue)this.dialogue=null;
+    let interact=input.interact&&!this.previousInteract;this.previousInteract=!!input.interact;
+    if(interact&&this.dialogue){const finished=this.dialogue;this.dialogue=null;interact=false;this.dispatch('dialogue',finished.sourceId);if(this.scene!==scene)return;}
     const contacts=new Set();
     for(const e of [...scene.entities]){
       if(e===p||e.dead)continue;const overlap=runtimeOverlap(p,e),near=Math.hypot(e.x-p.x,e.y-p.y)<36;
@@ -189,7 +190,7 @@ export class Runtime {
       }
       if(this.scene!==scene)return;
       if(e.type==='switch'&&((interact&&near)||(overlap&&!this.contacts.has(e.id)))){e.active=!e.active;this.dispatch('switch',e.id,{active:e.active});}
-      if(e.type==='npc'&&interact&&near){this.dialogue={text:e.text||e.name||'',sourceId:e.id};this.dispatch('dialogue',e.id);this.notify('dialogue',this.dialogue||{});}if(this.scene!==scene)return;
+      if(e.type==='npc'&&interact&&near){this.dialogue={text:e.text||e.name||'',sourceId:e.id};interact=false;this.notify('dialogue',this.dialogue);}if(this.scene!==scene)return;
       if(['door','transition'].includes(e.type)&&(overlap||(near&&e.locked&&e.keyId&&this.keys.has(e.keyId)))){
         if(e.locked&&e.keyId&&this.keys.has(e.keyId)){e.locked=false;e.open=true;}
         if(!e.locked){this.dispatch('door',e.id);if(this.scene!==scene)return;this.transition(e.targetScene||'');return;}
