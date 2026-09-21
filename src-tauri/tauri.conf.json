@@ -5,8 +5,9 @@
   "identifier": "io.github.neshath.omafun",
   "build": {
     "beforeDevCommand": "npm start",
+    "beforeBuildCommand": "npm run desktop:stage",
     "devUrl": "http://127.0.0.1:4173",
-    "frontendDist": ".."
+    "frontendDist": "../dist"
   },
   "app": {
     "withGlobalTauri": false,
