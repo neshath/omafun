@@ -1,6 +1,6 @@
 # Omafun
 
-A dependency-free, local retro game creation studio and open-source game exchange. Built from the supplied master prompt's **required first playable slice**, using original hand-authored pixel motifs, tile patterns, characters, and scenery. The exchange currently uses local packages and read-only HTTPS catalogs; it is not a hosted publishing service.
+A dependency-free, local retro game creation studio and open-source game exchange for Omarchy linux. Built from the supplied master prompt's **required first playable slice**, using original hand-authored pixel motifs, tile patterns, characters, and scenery. The exchange currently uses local packages and read-only HTTPS catalogs; it is not a hosted publishing service.
 
 ## Run
 
