@@ -1,4 +1,4 @@
-# Omafun
+# Pixel Forge
 
 A dependency-free, local retro game creation studio and open-source game exchange for Omarchy linux. Built from the supplied master prompt's **required first playable slice**, using original hand-authored pixel motifs, tile patterns, characters, and scenery. The exchange currently uses local packages and read-only HTTPS catalogs; it is not a hosted publishing service.
 
@@ -7,7 +7,7 @@ A dependency-free, local retro game creation studio and open-source game exchang
 Requires Node.js 20 or newer. No package installation is needed.
 
 ```sh
-cd omafun
+cd pixel-forge
 npm start
 ```
 

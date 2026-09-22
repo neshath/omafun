@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Omafun",
+  "productName": "Pixel Forge",
   "version": "0.1.0",
-  "identifier": "io.github.neshath.omafun",
+  "identifier": "io.github.neshath.pixel-forge",
   "build": {
     "beforeDevCommand": "npm start",
     "beforeBuildCommand": "npm run desktop:stage",
@@ -14,7 +14,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Omafun — Retro Game Studio",
+        "title": "Pixel Forge — Retro Game Studio",
         "width": 1440,
         "height": 960,
         "minWidth": 980,

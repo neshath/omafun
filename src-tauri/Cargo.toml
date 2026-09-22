@@ -1,12 +1,12 @@
 [package]
-name = "omafun"
+name = "pixel-forge"
 version = "0.1.0"
 description = "A local retro game creation studio"
-authors = ["Omafun contributors"]
+authors = ["Pixel Forge contributors"]
 edition = "2021"
 
 [lib]
-name = "omafun_lib"
+name = "pixel_forge_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

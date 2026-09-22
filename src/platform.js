@@ -18,7 +18,7 @@ export async function openProjectFile(browserInput) {
     const path = await open({
       multiple: false,
       directory: false,
-      filters: [{name: 'Omafun project', extensions: ['json', 'pixel.json']}]
+      filters: [{name: 'Pixel Forge project', extensions: ['json', 'pixel.json']}]
     });
     if (!path || Array.isArray(path)) return null;
     return {name: path.split(/[\\/]/).pop() || 'project.pixel.json', text: await readTextFile(path)};
@@ -32,7 +32,7 @@ export async function saveProjectFile(data, suggestedName, mime = 'application/j
     const {save, writeTextFile} = tauriModules();
     const path = await save({
       defaultPath: suggestedName,
-      filters: [{name: mime === 'text/html' ? 'HTML game' : 'Omafun project', extensions: [mime === 'text/html' ? 'html' : 'pixel.json']}]
+      filters: [{name: mime === 'text/html' ? 'HTML game' : 'Pixel Forge project', extensions: [mime === 'text/html' ? 'html' : 'pixel.json']}]
     });
     if (!path) return false;
     await writeTextFile(path, data);

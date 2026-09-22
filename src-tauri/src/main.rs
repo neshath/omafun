@@ -1,5 +1,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    omafun_lib::run()
+    pixel_forge_lib::run()
 }

@@ -1,30 +1,30 @@
-# Maintainer: Omafun contributors
-pkgname=omafun
+# Maintainer: Pixel Forge contributors
+pkgname=pixel-forge
 pkgver=0.1.0
 pkgrel=1
 pkgdesc='Local retro game creation studio'
 arch=('x86_64' 'aarch64')
-url='https://github.com/neshath/omafun'
+url='https://github.com/neshath/pixel-forge'
 license=('MIT')
 depends=('webkit2gtk-4.1')
 makedepends=('git' 'nodejs' 'npm' 'rust')
-source=("git+${url}.git#commit=${OMAFUN_COMMIT:-main}")
+source=("git+${url}.git#commit=${PIXEL_FORGE_COMMIT:-main}")
 sha256sums=('SKIP')
 
 prepare() {
-  cd "${srcdir}/omafun"
+  cd "${srcdir}/pixel-forge"
   npm install --ignore-scripts --no-audit --no-fund --include=dev
 }
 
 build() {
-  cd "${srcdir}/omafun"
+  cd "${srcdir}/pixel-forge"
   npm run desktop:build -- --no-bundle
 }
 
 package() {
-  cd "${srcdir}/omafun"
-  install -Dm755 src-tauri/target/release/omafun "${pkgdir}/usr/bin/omafun"
-  install -Dm644 packaging/omafun.desktop "${pkgdir}/usr/share/applications/omafun.desktop"
-  install -Dm644 src-tauri/icons/icon.png "${pkgdir}/usr/share/icons/hicolor/256x256/apps/omafun.png"
+  cd "${srcdir}/pixel-forge"
+  install -Dm755 src-tauri/target/release/pixel-forge "${pkgdir}/usr/bin/pixel-forge"
+  install -Dm644 packaging/pixel-forge.desktop "${pkgdir}/usr/share/applications/pixel-forge.desktop"
+  install -Dm644 src-tauri/icons/icon.png "${pkgdir}/usr/share/icons/hicolor/256x256/apps/pixel-forge.png"
   install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
 }

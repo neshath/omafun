@@ -1,6 +1,6 @@
-# Omafun desktop build
+# Pixel Forge desktop build
 
-Omafun uses a two-layer architecture. The editor, Canvas renderer, runtime, marketplace, project format, and standalone HTML export remain the shared web engine. Tauri supplies only the Linux desktop shell and native file dialogs.
+Pixel Forge uses a two-layer architecture. The editor, Canvas renderer, runtime, marketplace, project format, and standalone HTML export remain the shared web engine. Tauri supplies only the Linux desktop shell and native file dialogs.
 
 ## Development modes
 
@@ -30,13 +30,13 @@ npm install
 npm run desktop:build
 ```
 
-The exact package names can vary with the installed Omarchy/Arch release. If WebKit rendering is blank or corrupted, try launching with `WEBKIT_DISABLE_DMABUF_RENDERER=1 omafun`. The resulting binaries are emitted under `src-tauri/target/release/` and bundled artifacts under `src-tauri/target/release/bundle/`.
+The exact package names can vary with the installed Omarchy/Arch release. If WebKit rendering is blank or corrupted, try launching with `WEBKIT_DISABLE_DMABUF_RENDERER=1 pixel-forge`. The resulting binaries are emitted under `src-tauri/target/release/` and bundled artifacts under `src-tauri/target/release/bundle/`.
 
 The included `packaging/PKGBUILD` builds the embedded desktop binary and installs it with an application launcher and icon. It is intended as a starting point for an Arch/AUR-style package, not as a claim that the package has already been accepted into the Omarchy marketplace.
 
 ## Compatibility boundary
 
-The desktop shell does not change the Omafun project format or runtime. Tauri uses WebKitGTK on Linux rather than Chromium, so final validation should include Canvas rendering, keyboard shortcuts, drag/drop, file dialogs, PNG import/export, gamepad input, and the responsive editor layout under Wayland/Hyprland.
+The desktop shell does not change the Pixel Forge project format or runtime. Tauri uses WebKitGTK on Linux rather than Chromium, so final validation should include Canvas rendering, keyboard shortcuts, drag/drop, file dialogs, PNG import/export, gamepad input, and the responsive editor layout under Wayland/Hyprland.
 
 ## Permissions
 

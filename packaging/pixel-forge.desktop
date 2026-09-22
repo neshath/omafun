@@ -1,10 +1,10 @@
 [Desktop Entry]
-Name=Omafun
+Name=Pixel Forge
 Comment=Retro game creation studio
-Exec=omafun
-Icon=omafun
+Exec=pixel-forge
+Icon=pixel-forge
 Terminal=false
 Type=Application
 Categories=Game;Development;
 Keywords=pixel;game;editor;retro;
-StartupWMClass=omafun
+StartupWMClass=pixel-forge

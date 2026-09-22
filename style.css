@@ -56,3 +56,26 @@
 :root[data-skin="playground"] .statusbar{border-top:2px solid #6c5967;color:#59465e}
 :root[data-skin="playground"] .pink{color:#d82f7c}
 :root[data-skin="playground"] .signal{color:#679c31}
+
+/* Phase 1/2 layout controls */
+:root{--left-panel-width:208px;--right-panel-width:244px;--asset-panel-height:200px}
+.studio{position:relative;grid-template-columns:var(--left-panel-width) minmax(340px,1fr) var(--right-panel-width)}
+.left-panel,.inspector{min-width:0;transition:width .15s ease,opacity .15s ease}
+.asset-panel{height:var(--asset-panel-height);min-height:var(--asset-panel-height);position:relative}
+.left-panel.collapsed,.inspector.collapsed{overflow:hidden}
+.left-panel.collapsed>*:not(.panel-heading),.inspector.collapsed>*:not(.panel-heading){display:none}
+.studio.left-collapsed{--left-panel-width:28px}
+.studio.right-collapsed{--right-panel-width:28px}
+.left-panel.collapsed .panel-heading,.inspector.collapsed .panel-heading{writing-mode:vertical-rl;height:100%;width:28px;padding:12px 6px;gap:10px;justify-content:flex-start}
+.left-panel.collapsed .panel-heading button,.inspector.collapsed .panel-heading button{writing-mode:initial;margin-top:8px}
+.panel-collapse{font-size:17px!important;padding:1px 5px!important;margin-left:auto}
+.resize-grip{position:absolute;z-index:8;display:block;background:transparent;opacity:.35;transition:background .15s,opacity .15s}
+.resize-grip:hover,.resize-grip.dragging{background:var(--pink);opacity:.9}
+.left-resize-grip,.right-resize-grip{top:0;bottom:0;width:7px;cursor:col-resize}
+.left-resize-grip{left:calc(var(--left-panel-width) - 3px)}
+.right-resize-grip{right:calc(var(--right-panel-width) - 3px)}
+.asset-resize-grip{left:0;right:0;top:-4px;height:9px;cursor:row-resize}
+#resetLayout{margin-left:auto}
+.asset-panel.collapsed .asset-resize-grip{display:none}
+@media(max-width:1150px){.studio{grid-template-columns:var(--left-panel-width) minmax(340px,1fr) var(--right-panel-width)}}
+:root[data-skin="playground"] .resize-grip:hover,:root[data-skin="playground"] .resize-grip.dragging{background:#f24f96}

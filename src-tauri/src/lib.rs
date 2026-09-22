@@ -14,5 +14,5 @@ pub fn run() {
             Ok(())
         })
         .run(tauri::generate_context!())
-        .expect("error while running Omafun");
+        .expect("error while running Pixel Forge");
 }
