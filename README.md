@@ -1,30 +1,96 @@
-# Pixel Forge
+<div align="center">
 
-Pixel Forge is a local-first retro game creation studio for making small 2D games pixel by pixel. It runs as a dependency-light browser editor and can be packaged as a native Linux desktop application for Omarchy and other Arch-based systems.
+# ✦ Pixel Forge
 
-The project is intentionally local-first: projects, assets, and editor state stay on the user’s device unless the user explicitly exports or shares a project package. The Exchange currently supports local packages and read-only HTTPS catalogs; it is not a hosted publishing service.
+### A tiny retro game studio for making big worlds, pixel by pixel.
 
-## Current status
+[![Tests](https://img.shields.io/badge/tests-30%20passing-a9e45e?style=for-the-badge&labelColor=30283a)](https://github.com/neshath/pixel-forge/actions)
+[![Platform](https://img.shields.io/badge/platform-Omarchy%20%2F%20Linux-ec6e88?style=for-the-badge&labelColor=30283a)](https://github.com/neshath/pixel-forge)
+[![Runtime](https://img.shields.io/badge/runtime-browser%20%2B%20Tauri-5ec7d3?style=for-the-badge&labelColor=30283a)](https://github.com/neshath/pixel-forge)
+[![License](https://img.shields.io/badge/license-MIT-e4edce?style=for-the-badge&labelColor=30283a)](LICENSE)
 
-Pixel Forge includes the first playable editor/runtime slice and a working Tauri desktop shell. The browser editor and native desktop build share the same project model, renderer, runtime, and export path.
+</div>
 
-The current release includes:
+Pixel Forge is a **local-first retro game creation studio** for making small 2D games without an account, hosted backend, or heavyweight editor workflow. Draw terrain, place entities, make sprites, import audio, playtest immediately, and export a standalone HTML game.
 
-- Terrain, collision, layer, camera, and entity editing.
-- Multiple scenes and game-format settings.
-- Pixel sprite creation, frame editing, animation preview, onion skinning, and PNG sheet import/export.
-- Playtest with movement, jumping, attacks, pickups, hazards, checkpoints, doors, pause, respawn, HUD, and gamepad mapping.
-- Logic rules, HUD configuration, scene management, asset folders, and local Exchange packages.
-- Collapsible and resizable editor panels with persistent layout settings.
-- The classic Pixel Forge skin and the optional colorful Pixel Playground skin.
-- Audio v1 asset management: import sound effects and music, preview them, toggle music looping, and delete assets.
-- Portable `.pixel.json` project files, browser autosave, standalone HTML game export, and native Linux file dialogs in the Tauri build.
+The browser editor and native Linux desktop app share the same project model, renderer, runtime, and export path.
 
-Audio v1 currently stores and previews audio assets. Assigning sounds to gameplay events, runtime music playback, and audio in exported games are planned follow-up features.
+> **Current status:** The first playable editor/runtime slice is complete. The Tauri desktop shell builds successfully for Linux, and the project is being prepared for real Omarchy/Hyprland validation.
 
-## Browser quick start
+```js
+const pixelForge = {
+  mission: "Make something playable.",
+  audience: "Curious game creators and pixel-art beginners",
+  platforms: ["Browser", "Linux", "Omarchy", "Hyprland"],
+  workflow: ["Draw", "Place", "Configure", "Playtest", "Export"],
+  storage: "Local-first · portable .pixel.json projects",
+  style: "Tactile 1990s workstation with original pixel motifs",
+  currentFocus: "Audio v1 and Omarchy validation",
+  funFact: "Every visible tool is meant to do something."
+};
+```
 
-Requires Node.js 20 or newer. The editor has no production dependency-install step.
+## ✦ What you can do right now
+
+| Area | Capabilities |
+|---|---|
+| **World building** | Paint, erase, fill, draw rectangles and lines, eyedrop tiles, pan, zoom, show grids, edit collisions, and compose camera bounds. |
+| **Scenes and layers** | Create, duplicate, rename, reorder, lock, hide, and delete scenes and layers. Configure game formats, environments, and HUD settings. |
+| **Entities** | Place players, enemies, gems, health, checkpoints, doors, platforms, bosses, NPCs, triggers, hazards, emitters, and other supported objects. |
+| **Gameplay** | Move, jump, attack, collect items, take damage, respawn at checkpoints, open doors, pause, restart, and complete stages. |
+| **Sprites** | Draw 8/16/24/32/64 px sprites, edit palettes, duplicate frames, set timing, use onion skinning, preview loop/ping-pong/one-shot animation, and import/export PNG sheets. |
+| **Audio v1** | Import sound effects and music, preview them, toggle looping per asset, and delete assets with undo support. |
+| **Logic** | Create visual event rules for switches, doors, dialogue, scenes, camera changes, sounds, messages, animation, items, checkpoints, and boss phases. |
+| **Projects** | Save and reopen portable `.pixel.json` projects, recover browser autosaves, browse versions, manage folders, and export standalone HTML games. |
+| **Exchange** | Work with source-included local packages, author/license/source metadata, editable forks, attribution, recoverable local libraries, and read-only HTTPS catalogs. |
+| **Editor feel** | Collapsible and resizable panels, persistent layout settings, keyboard shortcuts, classic Pixel Forge skin, and optional Pixel Playground skin. |
+
+## ◈ The workflow
+
+```text
+┌──────────────┐     ┌─────────────┐     ┌──────────────┐
+│  1. DRAW     │ ──▶ │  2. PLACE   │ ──▶ │  3. CONFIGURE│
+│  terrain     │     │  entities   │     │  rules + HUD │
+└──────────────┘     └─────────────┘     └──────────────┘
+                                                  │
+                                                  ▼
+┌──────────────┐     ┌─────────────┐     ┌──────────────┐
+│  6. SHARE     │ ◀── │  5. EXPORT  │ ◀── │  4. PLAYTEST │
+│  project file │     │  HTML game  │     │  immediately │
+└──────────────┘     └─────────────┘     └──────────────┘
+```
+
+1. Choose **New empty project**, or explore the labeled **Moonfern sample**.
+2. Open **Tiles**, choose a tile, and paint with Pencil, Eraser, Fill, Rectangle, Line, or Eyedropper.
+3. Open **Entities**, choose a supported object, and click the map to place it.
+4. Use **Select** to move and inspect entities. Configure transforms, artwork, movement, health, damage, paths, and destinations in the Inspector.
+5. Open **♫ Audio** to import small sound effects or music files. Use native preview controls and enable **Loop** for music.
+6. Press **Playtest**. Default controls are arrows or A/D to move, Space to jump, X to attack, Esc to pause, and R to restart.
+7. Use **Save** to download an editable `.pixel.json` project, **Open project** to restore one, and **Export game** to download a standalone HTML game for the active scene.
+
+Playtest uses an isolated runtime scene, so gameplay changes such as enemy damage, pickups, deaths, and checkpoints do not mutate the editable scene.
+
+## ♫ Audio v1
+
+The first audio slice is deliberately small and portable:
+
+- Import one or multiple sound effects.
+- Import one or multiple music files.
+- Preview imported files with native audio controls.
+- Toggle looping per asset; music is enabled for looping by default.
+- Delete assets with undo support.
+- Store audio inside the project JSON for portability.
+
+Limits for this first slice:
+
+- **4 MB** maximum per audio file.
+- **8 MB** maximum audio library per project.
+- Audio is not yet triggered by gameplay events.
+- Runtime music and sound playback in exported HTML games are planned follow-up work.
+
+## ⌘ Browser quick start
+
+Requires **Node.js 20 or newer**. No production dependency-install step is needed.
 
 ```sh
 git clone https://github.com/neshath/pixel-forge.git
@@ -32,7 +98,7 @@ cd pixel-forge
 npm start
 ```
 
-Open [http://127.0.0.1:4173](http://127.0.0.1:4173). The default server listens only on loopback, so it is intended for local development.
+Open [http://127.0.0.1:4173](http://127.0.0.1:4173). The default server listens only on loopback and is intended for local development.
 
 For an explicitly public preview on a trusted network or sandbox, opt in to a non-loopback host and a separate port:
 
@@ -40,61 +106,9 @@ For an explicitly public preview on a trusted network or sandbox, opt in to a no
 HOST=0.0.0.0 PORT=4174 npm start
 ```
 
-Do not use that command on an untrusted network without an appropriate firewall or access control layer.
+Do not use that command on an untrusted network without a firewall or access-control layer.
 
-## Create a game
-
-1. Choose **New empty project**, or explore the labeled **Moonfern sample**.
-2. Open **Tiles**, choose a terrain or decoration tile, and paint with Pencil, Eraser, Fill, Rectangle, Line, or Eyedropper.
-3. Open **Entities**, choose a player, enemy, pickup, checkpoint, door, platform, boss, or other supported object, and place it on the canvas.
-4. Use **Select** to move and inspect entities. Configure their transform, artwork, movement, health, damage, paths, and destinations in the Inspector.
-5. Use **Collision** to override individual cells and **Camera** to compose the runtime viewport.
-6. Open **♫ Audio** to import small sound-effect or music files. Use the native preview controls and enable **Loop** for music tracks.
-7. Press **Playtest**. The default controls are arrows or A/D to move, Space to jump, X to attack, Esc to pause, and R to restart.
-8. Use **Save** to download an editable `.pixel.json` project. Use **Open project** to restore one. Use **Export game** to download a standalone HTML game for the active scene.
-
-Playtest uses an isolated runtime scene. Gameplay changes such as enemy damage, pickups, deaths, and checkpoints do not mutate the editable scene.
-
-## Editor features
-
-### World and scene editing
-
-- Tile painting, erasing, filling, rectangles, lines, eyedropping, panning, zooming, grid display, and collision overlays.
-- Named scenes, scene duplication, scene deletion, camera settings, game-format selection, and biome palettes.
-- Layer visibility, locking, renaming, ordering, duplication, and custom decorative layers.
-- Entity placement, selection, movement, duplication, deletion, artwork assignment, transforms, paths, and behavior settings.
-- Persistent collapse and resize controls for the Project, Inspector, and Assets panels.
-
-### Sprite and asset editing
-
-- 8, 16, 24, 32, and 64 pixel sprite canvases.
-- Transparency, palette editing, frame duplication, frame timing, onion skinning, and loop, ping-pong, and one-shot previews.
-- PNG sprite-sheet import and export.
-- Reusable sprite assets with folders, tags, and assignment through the Inspector.
-
-### Audio v1
-
-The Audio tab provides a small, portable asset library:
-
-- Import one or multiple sound effects.
-- Import one or multiple music files.
-- Preview imported files with native audio controls.
-- Toggle looping per asset, with music enabled by default.
-- Delete assets with undo support.
-- Store audio inside the project JSON for portability.
-
-Audio imports are limited to **4 MB per file** and **8 MB per project** in this first slice. Audio is not yet triggered by gameplay events and is not yet included in exported-game runtime playback.
-
-### Exchange and projects
-
-- Source-included local packages.
-- Author, license, and source metadata.
-- Editable forks with attribution.
-- Recoverable local library and project version history.
-- Read-only HTTPS catalog fetching.
-- Browser autosave and validated portable project files.
-
-## Linux desktop build
+## ▣ Linux desktop build
 
 The Tauri desktop build embeds the same web editor and runs without a local development server. It provides native Open, Save, and Export dialogs.
 
@@ -113,7 +127,7 @@ npm install
 RUSTUP_TOOLCHAIN=stable npm run desktop:build
 ```
 
-The build produces:
+Build outputs:
 
 ```text
 src-tauri/target/release/pixel-forge
@@ -121,7 +135,7 @@ src-tauri/target/release/bundle/appimage/Pixel Forge_0.1.0_amd64.AppImage
 src-tauri/target/release/bundle/deb/Pixel Forge_0.1.0_amd64.deb
 ```
 
-The AppImage and Arch `PKGBUILD` path are the preferred formats for Omarchy. The `.deb` is intended primarily for Debian- or Ubuntu-based systems and should not be treated as the native Omarchy package format.
+For Omarchy, prefer the **AppImage** or the included Arch **PKGBUILD** path. The `.deb` is primarily for Debian- or Ubuntu-based systems and is not the native Omarchy package format.
 
 If WebKitGTK renders a blank or corrupted view, retry with:
 
@@ -129,9 +143,22 @@ If WebKitGTK renders a blank or corrupted view, retry with:
 WEBKIT_DISABLE_DMABUF_RENDERER=1 ./src-tauri/target/release/pixel-forge
 ```
 
-Final Wayland/Hyprland validation still needs to be performed on a real Omarchy installation. The sandbox validates Linux compilation and X11 launch behavior, but it is not an Omarchy/Hyprland test machine.
+Final Wayland/Hyprland validation still needs to happen on a real Omarchy installation. The sandbox validates Linux compilation and X11 launch behavior, but it is not an Omarchy/Hyprland test machine.
 
-## Verification
+## ◇ Project and Exchange model
+
+Pixel Forge is designed around portable, inspectable files:
+
+- Source-included local packages.
+- Author, license, and source metadata.
+- Editable forks with attribution.
+- Recoverable local library and project version history.
+- Read-only HTTPS catalog fetching.
+- Browser autosave and validated portable project files.
+
+The Exchange is **not** a hosted publishing service yet. A public catalog, accounts, moderation, reporting, ratings, package updates, and online submission flow remain future work.
+
+## ⚙ Verification
 
 Run the automated suite:
 
@@ -139,36 +166,55 @@ Run the automated suite:
 npm test
 ```
 
-The test suite covers project round trips, extended validation, invalid-file rejection, undo/redo isolation, terrain operations, collision behavior, runtime movement, one-way platforms, collectibles, checkpoints, respawn, pause, export bundling, marketplace validation, the native file bridge, and Audio v1 asset round trips.
+The current suite contains **30 passing tests** covering:
 
-The current suite contains **30 passing tests**. Browser smoke checks cover editor startup, the Audio tab, layout controls, project workflows, marketplace views, and playtest entry.
+- Project round trips and extended validation.
+- Invalid file rejection and storage recovery.
+- Undo/redo isolation.
+- Terrain operations, collision behavior, and one-way platforms.
+- Runtime movement, collectibles, checkpoints, respawn, pause, and completion.
+- Export bundling and offline startup.
+- Marketplace package validation.
+- Native file bridge configuration.
+- Audio v1 asset round trips and invalid audio-data rejection.
 
-## Known limitations and roadmap
+Browser smoke checks cover editor startup, painting/history, layout controls, project workflows, the Audio tab, marketplace views, and playtest entry.
 
-The next major steps are:
+## ✎ Source map
 
-1. Validate the AppImage and Arch package on real Omarchy/Hyprland hardware.
+```text
+src/model.js            project model, validation, scenes, entities, assets, rules
+src/render.js           Canvas rendering for scenes, entities, tiles, overlays
+src/runtime.js          isolated gameplay simulation and runtime rendering
+src/app.js              editor state, input, autosave, files, audio, export
+src/editor-panels.js    Inspector, asset libraries, Audio, HUD, logic, files
+src/workbench.js        tabs, Exchange integration, responsive editor behavior
+src/platform.js         browser/native file bridge
+src-tauri/              native Linux desktop shell and capabilities
+packaging/              desktop entry and Arch packaging metadata
+tests/                  model, runtime, storage, export, platform, marketplace, audio
+```
+
+## ◌ Roadmap
+
+1. Validate AppImage and Arch packages on real Omarchy/Hyprland hardware.
 2. Connect imported audio to gameplay events and exported-game playback.
-3. Improve editor workflows such as multi-selection, autotiling, slopes, animation timelines, and complete undo coverage.
-4. Add richer runtime systems including advanced enemy AI, bosses, moving platforms, particles, transitions, and more hazards.
-5. Add CI, reproducible release artifacts, and release documentation.
+3. Improve multi-selection, autotiling, slopes, animation timelines, camera editing, sprite workflows, and complete undo coverage.
+4. Add richer runtime systems: advanced enemy AI, bosses, moving platforms, particles, transitions, and more hazards.
+5. Add CI, reproducible release artifacts, release documentation, screenshots, and demo media.
 6. Build hosted community marketplace infrastructure separately from the local editor.
+7. Expand beginner mode, accessibility, guided tutorials, safer destructive actions, and child-friendly workflows.
 
-The project is suitable for experimentation, prototyping, and early community review. It is not yet a complete commercial-grade game engine or an online publishing platform.
-
-## Source structure
-
-- `src/model.js` — structured project model, validation, scenes, entities, assets, and rules.
-- `src/render.js` — Canvas rendering for scenes, entities, tiles, and overlays.
-- `src/runtime.js` — isolated gameplay simulation and runtime rendering.
-- `src/app.js` — editor state, input handling, autosave, file operations, audio imports, and export actions.
-- `src/editor-panels.js` — Inspector, asset libraries, Audio tab, HUD, logic, files, and collision panels.
-- `src/workbench.js` — panel composition, tabs, Exchange integration, and responsive editor behavior.
-- `src/platform.js` — browser/native file bridge.
-- `src-tauri/` — native Linux desktop shell and capabilities.
-- `packaging/` — desktop entry and Arch packaging metadata.
-- `tests/` — model, runtime, storage, export, marketplace, platform, and Audio v1 tests.
+Pixel Forge is ready for experimentation, prototyping, and early community review. It is not yet a complete commercial-grade game engine or online publishing platform.
 
 ## License
 
-Pixel Forge is released under the MIT License. See [LICENSE](LICENSE).
+Pixel Forge is released under the [MIT License](LICENSE).
+
+<div align="center">
+
+**Make games. Pixel by pixel.**
+
+[Repository](https://github.com/neshath/pixel-forge) · [Issues](https://github.com/neshath/pixel-forge/issues) · [License](LICENSE)
+
+</div>
