@@ -1,57 +1,174 @@
 # Pixel Forge
 
-A dependency-free, local retro game creation studio and open-source game exchange for Omarchy linux. Built from the supplied master prompt's **required first playable slice**, using original hand-authored pixel motifs, tile patterns, characters, and scenery. The exchange currently uses local packages and read-only HTTPS catalogs; it is not a hosted publishing service.
+Pixel Forge is a local-first retro game creation studio for making small 2D games pixel by pixel. It runs as a dependency-light browser editor and can be packaged as a native Linux desktop application for Omarchy and other Arch-based systems.
 
-## Run
+The project is intentionally local-first: projects, assets, and editor state stay on the user’s device unless the user explicitly exports or shares a project package. The Exchange currently supports local packages and read-only HTTPS catalogs; it is not a hosted publishing service.
 
-Requires Node.js 20 or newer. No package installation is needed.
+## Current status
+
+Pixel Forge includes the first playable editor/runtime slice and a working Tauri desktop shell. The browser editor and native desktop build share the same project model, renderer, runtime, and export path.
+
+The current release includes:
+
+- Terrain, collision, layer, camera, and entity editing.
+- Multiple scenes and game-format settings.
+- Pixel sprite creation, frame editing, animation preview, onion skinning, and PNG sheet import/export.
+- Playtest with movement, jumping, attacks, pickups, hazards, checkpoints, doors, pause, respawn, HUD, and gamepad mapping.
+- Logic rules, HUD configuration, scene management, asset folders, and local Exchange packages.
+- Collapsible and resizable editor panels with persistent layout settings.
+- The classic Pixel Forge skin and the optional colorful Pixel Playground skin.
+- Audio v1 asset management: import sound effects and music, preview them, toggle music looping, and delete assets.
+- Portable `.pixel.json` project files, browser autosave, standalone HTML game export, and native Linux file dialogs in the Tauri build.
+
+Audio v1 currently stores and previews audio assets. Assigning sounds to gameplay events, runtime music playback, and audio in exported games are planned follow-up features.
+
+## Browser quick start
+
+Requires Node.js 20 or newer. The editor has no production dependency-install step.
 
 ```sh
+git clone https://github.com/neshath/pixel-forge.git
 cd pixel-forge
 npm start
 ```
 
-Open http://127.0.0.1:4173. The server listens only on the local computer.
+Open [http://127.0.0.1:4173](http://127.0.0.1:4173). The default server listens only on loopback, so it is intended for local development.
+
+For an explicitly public preview on a trusted network or sandbox, opt in to a non-loopback host and a separate port:
+
+```sh
+HOST=0.0.0.0 PORT=4174 npm start
+```
+
+Do not use that command on an untrusted network without an appropriate firewall or access control layer.
 
 ## Create a game
 
 1. Choose **New empty project**, or explore the labeled **Moonfern sample**.
-2. Select Terrain, select a tile, and paint. Pencil, eraser, fill, rectangle, line, and eyedropper work on the canvas.
-3. Open **Entities** and select Player, then click the map. Add enemies, gems, health, checkpoints and an exit door the same way.
-4. Use Select to move an entity and edit its properties. Use Collision to override any individual cell. Camera shows the configurable viewport bounds.
-5. Press **Playtest**. Move with arrows/A/D, jump with Space, attack with X. Esc pauses; R restarts; Enter returns to editing.
-6. **Save** downloads the whole editable project. **Open project** imports it. **Export game** downloads the current scene as a standalone HTML game.
+2. Open **Tiles**, choose a terrain or decoration tile, and paint with Pencil, Eraser, Fill, Rectangle, Line, or Eyedropper.
+3. Open **Entities**, choose a player, enemy, pickup, checkpoint, door, platform, boss, or other supported object, and place it on the canvas.
+4. Use **Select** to move and inspect entities. Configure their transform, artwork, movement, health, damage, paths, and destinations in the Inspector.
+5. Use **Collision** to override individual cells and **Camera** to compose the runtime viewport.
+6. Open **♫ Audio** to import small sound-effect or music files. Use the native preview controls and enable **Loop** for music tracks.
+7. Press **Playtest**. The default controls are arrows or A/D to move, Space to jump, X to attack, Esc to pause, and R to restart.
+8. Use **Save** to download an editable `.pixel.json` project. Use **Open project** to restore one. Use **Export game** to download a standalone HTML game for the active scene.
 
-The game runtime uses a separate scene copy. Enemies, pickups, deaths, and checkpoints during play do not mutate the editor's scene.
+Playtest uses an isolated runtime scene. Gameplay changes such as enemy damage, pickups, deaths, and checkpoints do not mutate the editable scene.
 
-## Implemented
+## Editor features
 
-- Tile editing, pan/zoom, grid, collision overrides, one-way platforms and hazards.
-- Named scenes, scene duplication, layer visibility/locking/renaming, custom decorative layers.
-- Player, patrol/stationary enemy, gem, health, checkpoint, exit door. Select, move, duplicate and delete entities.
-- Configurable movement speed, jump velocity, gravity, health and enemy patrol range.
-- Platformer runtime: acceleration, coyote time, buffered jumps, attacks, enemy damage, pickups, checkpoint respawn, follow camera, layered scenery, pause and completion HUD.
-- Four environment palettes and optional CRT preview.
-- Dedicated pixel sprite canvas: 8/16/24/32/64 px, transparency, drawing tools, palette selection, flip, duplicated animation frames, timing, onion skin, loop/ping-pong/one-shot preview, PNG sheet import/export.
-- Undo/redo for project edits, browser autosave recovery, validated portable JSON projects.
-- Standalone HTML game export, keyboard shortcuts and gamepad input mapping.
+### World and scene editing
 
-## Scope boundaries
+- Tile painting, erasing, filling, rectangles, lines, eyedropping, panning, zooming, grid display, and collision overlays.
+- Named scenes, scene duplication, scene deletion, camera settings, game-format selection, and biome palettes.
+- Layer visibility, locking, renaming, ordering, duplication, and custom decorative layers.
+- Entity placement, selection, movement, duplication, deletion, artwork assignment, transforms, paths, and behavior settings.
+- Persistent collapse and resize controls for the Project, Inspector, and Assets panels.
 
-This is the first playable **platformer** slice, not the complete long-term editor roadmap. Top-down/arcade/beat-em-up controllers, visual event graphs, bosses, scene-transition logic, moving platforms, autotiling, audio, configurable HUDs, asset folders, multi-selection and custom shortcut remapping are not implemented. Water, ladder and lantern tiles are visual decorations; spikes deal damage. Custom sprites are editable/exportable assets but are not yet assignable to runtime entities. Camera width/height configure the runtime viewport; the camera position overlay is a composition guide, while playtest follows the player.
+### Sprite and asset editing
 
-In browser mode, Save is a download rather than a direct filesystem project directory; the Tauri desktop build uses native file dialogs. Autosave belongs to the current browser/origin and retains one latest project. Download a project file for durable backups or transferring between browsers. PNG sprite imports should be arranged as a grid with dimensions divisible by the selected frame size. Gamepad support is implemented but has not been verified on a physical controller.
+- 8, 16, 24, 32, and 64 pixel sprite canvases.
+- Transparency, palette editing, frame duplication, frame timing, onion skinning, and loop, ping-pong, and one-shot previews.
+- PNG sprite-sheet import and export.
+- Reusable sprite assets with folders, tags, and assignment through the Inspector.
+
+### Audio v1
+
+The Audio tab provides a small, portable asset library:
+
+- Import one or multiple sound effects.
+- Import one or multiple music files.
+- Preview imported files with native audio controls.
+- Toggle looping per asset, with music enabled by default.
+- Delete assets with undo support.
+- Store audio inside the project JSON for portability.
+
+Audio imports are limited to **4 MB per file** and **8 MB per project** in this first slice. Audio is not yet triggered by gameplay events and is not yet included in exported-game runtime playback.
+
+### Exchange and projects
+
+- Source-included local packages.
+- Author, license, and source metadata.
+- Editable forks with attribution.
+- Recoverable local library and project version history.
+- Read-only HTTPS catalog fetching.
+- Browser autosave and validated portable project files.
+
+## Linux desktop build
+
+The Tauri desktop build embeds the same web editor and runs without a local development server. It provides native Open, Save, and Export dialogs.
+
+On Arch Linux or Omarchy, install the build prerequisites:
+
+```sh
+sudo pacman -Syu
+sudo pacman -S --needed nodejs npm rust cargo webkit2gtk-4.1 \
+  lib32-webkit2gtk-4.1 gtk3 libayatana-appindicator librsvg patchelf
+```
+
+Build the native application:
+
+```sh
+npm install
+RUSTUP_TOOLCHAIN=stable npm run desktop:build
+```
+
+The build produces:
+
+```text
+src-tauri/target/release/pixel-forge
+src-tauri/target/release/bundle/appimage/Pixel Forge_0.1.0_amd64.AppImage
+src-tauri/target/release/bundle/deb/Pixel Forge_0.1.0_amd64.deb
+```
+
+The AppImage and Arch `PKGBUILD` path are the preferred formats for Omarchy. The `.deb` is intended primarily for Debian- or Ubuntu-based systems and should not be treated as the native Omarchy package format.
+
+If WebKitGTK renders a blank or corrupted view, retry with:
+
+```sh
+WEBKIT_DISABLE_DMABUF_RENDERER=1 ./src-tauri/target/release/pixel-forge
+```
+
+Final Wayland/Hyprland validation still needs to be performed on a real Omarchy installation. The sandbox validates Linux compilation and X11 launch behavior, but it is not an Omarchy/Hyprland test machine.
 
 ## Verification
+
+Run the automated suite:
 
 ```sh
 npm test
 ```
 
-The tests cover project round trips, invalid file rejection, empty projects, undo/redo isolation, fill boundaries, line endpoints, collision overrides, landing/jumping, one-way collision, collectibles, checkpoints, completion, respawn and pause. The browser was also used to verify the visible editor, painting/history and playtest entry.
+The test suite covers project round trips, extended validation, invalid-file rejection, undo/redo isolation, terrain operations, collision behavior, runtime movement, one-way platforms, collectibles, checkpoints, respawn, pause, export bundling, marketplace validation, the native file bridge, and Audio v1 asset round trips.
+
+The current suite contains **30 passing tests**. Browser smoke checks cover editor startup, the Audio tab, layout controls, project workflows, marketplace views, and playtest entry.
+
+## Known limitations and roadmap
+
+The next major steps are:
+
+1. Validate the AppImage and Arch package on real Omarchy/Hyprland hardware.
+2. Connect imported audio to gameplay events and exported-game playback.
+3. Improve editor workflows such as multi-selection, autotiling, slopes, animation timelines, and complete undo coverage.
+4. Add richer runtime systems including advanced enemy AI, bosses, moving platforms, particles, transitions, and more hazards.
+5. Add CI, reproducible release artifacts, and release documentation.
+6. Build hosted community marketplace infrastructure separately from the local editor.
+
+The project is suitable for experimentation, prototyping, and early community review. It is not yet a complete commercial-grade game engine or an online publishing platform.
 
 ## Source structure
 
-`src/model.js` stores the structured project model, validation and editing operations. `src/render.js` draws original pixel assets and scenes. `src/runtime.js` owns isolated gameplay simulation. `src/app.js` connects editor interactions, autosave, file management and exports. `style.css` implements the retro interface.
+- `src/model.js` — structured project model, validation, scenes, entities, assets, and rules.
+- `src/render.js` — Canvas rendering for scenes, entities, tiles, and overlays.
+- `src/runtime.js` — isolated gameplay simulation and runtime rendering.
+- `src/app.js` — editor state, input handling, autosave, file operations, audio imports, and export actions.
+- `src/editor-panels.js` — Inspector, asset libraries, Audio tab, HUD, logic, files, and collision panels.
+- `src/workbench.js` — panel composition, tabs, Exchange integration, and responsive editor behavior.
+- `src/platform.js` — browser/native file bridge.
+- `src-tauri/` — native Linux desktop shell and capabilities.
+- `packaging/` — desktop entry and Arch packaging metadata.
+- `tests/` — model, runtime, storage, export, marketplace, platform, and Audio v1 tests.
 
-The Impeccable design skill informed panel hierarchy, contrast, focus states and spacing; the supplied prompt defined the pink/charcoal visual identity.
+## License
+
+Pixel Forge is released under the MIT License. See [LICENSE](LICENSE).
