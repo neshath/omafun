@@ -9,6 +9,15 @@
 [![Runtime](https://img.shields.io/badge/runtime-browser%20%2B%20Tauri-5ec7d3?style=for-the-badge&labelColor=30283a)](https://github.com/neshath/pixel-forge)
 [![License](https://img.shields.io/badge/license-MIT-e4edce?style=for-the-badge&labelColor=30283a)](LICENSE)
 
+<img src="https://github-readme-stats.vercel.app/api/pin/?username=neshath&repo=pixel-forge&theme=radical&hide_border=true&show_owner=true" alt="Live Pixel Forge repository stats" width="420">
+
+<br>
+
+[![GitHub stars](https://img.shields.io/github/stars/neshath/pixel-forge?style=for-the-badge&logo=github&label=stars&color=f6c453&labelColor=30283a)](https://github.com/neshath/pixel-forge/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/neshath/pixel-forge?style=for-the-badge&logo=git&label=forks&color=a9e45e&labelColor=30283a)](https://github.com/neshath/pixel-forge/network/members)
+[![Open issues](https://img.shields.io/github/issues/neshath/pixel-forge?style=for-the-badge&logo=github&label=issues&color=ec6e88&labelColor=30283a)](https://github.com/neshath/pixel-forge/issues)
+[![Last commit](https://img.shields.io/github/last-commit/neshath/pixel-forge?style=for-the-badge&logo=git&label=updated&color=5ec7d3&labelColor=30283a)](https://github.com/neshath/pixel-forge/commits/main)
+
 </div>
 
 Pixel Forge is a **local-first retro game creation studio** for making small 2D games without an account, hosted backend, or heavyweight editor workflow. Draw terrain, place entities, make sprites, import audio, playtest immediately, and export a standalone HTML game.
