@@ -12,7 +12,7 @@ export function mountWorkbench(api){
  const close=document.createElement('button');close.textContent='×';close.className='mobile-inspector';close.setAttribute('aria-label','Close inspector');
  close.onclick=()=>{document.body.classList.remove('inspector-open');inspect.setAttribute('aria-expanded','false');};
  document.querySelector('.inspector .panel-heading').append(close);
- for(const [id,label]of [['logic','⌘ Logic'],['market','✦ Market']]){
+ for(const [id,label]of [['audio','♫ Audio'],['logic','⌘ Logic'],['market','✦ Market']]){
   const button=document.createElement('button');button.dataset.tab=id;button.textContent=label;
   button.onclick=()=>api.setTab(id);tabs.insertBefore(button,document.querySelector('#collapse'));
  }
@@ -20,7 +20,7 @@ export function mountWorkbench(api){
   renderAssets(tab){
    workspace.classList.toggle('market-mode',tab==='market');
    document.querySelector('.studio').classList.toggle('exchange-open',tab==='market');
-   workspace.classList.toggle('expanded-assets',['logic','files','hud','collisions'].includes(tab));
+   workspace.classList.toggle('expanded-assets',['audio','logic','files','hud','collisions'].includes(tab));
    document.querySelector('#assets').className='asset-grid';
    if(tab==='market')return market.render();
    return panels.renderAssets(tab);

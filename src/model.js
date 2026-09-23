@@ -37,7 +37,7 @@ export function initializeScene(s){
  s.entities.forEach(e=>{e.spriteId??='';e.flipX??=false;e.flipY??=false;e.scale??=1;e.rotation??=0;e.targetScene??='';e.locked??=false;e.keyId??='';e.text??='';e.period??=2;e.direction??=1;e.path??=[];e.tags??=[];});return s;
 }
 export function initializeProject(p){
- p.id??=crypto.randomUUID();p.assets??=[];p.favorites??=[];p.recentAssets??=[];p.folders??=['Sprites','Characters','Effects'];
+ p.id??=crypto.randomUUID();p.assets??=[];p.audio??={effects:[],music:[]};p.audio.effects??=[];p.audio.music??=[];p.favorites??=[];p.recentAssets??=[];p.folders??=['Sprites','Characters','Effects'];
  p.settings={highContrast:false,reducedMotion:false,uiScale:100,sound:true,volume:.25,shortcuts:{},...p.settings};
  p.sprite.id??='custom';p.sprite.name??='Untitled sprite';p.sprite.folder??='Sprites';p.sprite.tags??=[];
  p.paletteOverrides??={};p.scenes.forEach(initializeScene);return p;
@@ -46,6 +46,7 @@ export function createRule(){return{id:crypto.randomUUID(),name:'New interaction
 export function validateExtended(data){
  const p=initializeProject(validate(data));
  if(p.assets.length>256||p.folders.length>128)throw Error('The asset library is too large.');
+ for(const kind of ['effects','music']){if(!Array.isArray(p.audio[kind])||p.audio[kind].length>128)throw Error('The audio library is invalid.');for(const a of p.audio[kind]){if(typeof a.id!=='string'||typeof a.name!=='string'||!a.name.trim()||typeof a.mime!=='string'||!a.mime.startsWith('audio/')||typeof a.data!=='string'||!a.data.startsWith(`data:${a.mime};base64,`)||!Number.isFinite(a.bytes)||a.bytes<1||a.bytes>12_000_000)throw Error('The audio library contains an invalid file.');a.loop=Boolean(a.loop);}}
  const numeric=(value,min,max,label)=>{if(!Number.isFinite(value)||value<min||value>max)throw Error(`Invalid ${label}.`);};
  for(const s of p.scenes){
   if(!gameTypes[s.gameType]||!Array.isArray(s.events)||s.events.length>256)throw Error('Invalid scene rules or game format.');
