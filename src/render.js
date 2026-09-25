@@ -308,7 +308,8 @@ export function drawScene(c, s, options = {}) {
   } = options;
   if (!(scale > 0)) return;
   if(s.garden?.animate===false)time=0;
-  const gardenStyle={...gardenTheme(s.biome),...(s.garden?.packId===s.biome||s.biome==='watergarden'?s.garden:{})};
+  const themedGarden=gardenTheme(s.biome),willowmereWater=gardenTheme('watergarden');
+  const gardenStyle={...themedGarden,water:willowmereWater.water,light:willowmereWater.light,deep:willowmereWater.deep,...(s.garden?.packId===s.biome||s.biome==='watergarden'?s.garden:{})};
   const p = scenePalette(s), layers = s.layers || [];
   c.save();
   c.imageSmoothingEnabled = false;

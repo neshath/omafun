@@ -20,7 +20,7 @@ export function createGardenEditor(api){
   for(const [id,name]of [6,19,20,21].map((id,i)=>[id,pack.tiles[i]])){
    if(query&&!(pack.name+' '+name).toLowerCase().includes(query))continue;
    const b=button('',()=>{api.selected=null;api.tileId=id;api.layerId='terrain';api.setTool('pencil');api.renderLayers();api.renderInspector();api.note(name+' brush · B paints, R draws a filled region.');},'asset');
-   const c=node('canvas');c.width=c.height=32;const ctx=c.getContext('2d');ctx.scale(1.5,1.5);drawGardenTile(ctx,id,3,3,0,{},theme);b.append(c,node('span','',name));grid.append(b);
+   const c=node('canvas');c.width=c.height=32;const ctx=c.getContext('2d');ctx.scale(1.5,1.5);drawGardenTile(ctx,id,3,3,0,{},id===6?gardenTheme('watergarden'):theme);b.append(c,node('span','',name));grid.append(b);
   }
   for(const [kind,d]of Object.entries(gardenProps)){
    if(['tree','oak','sakura','willow','cactus','crystal','mushroom','gear'].includes(kind)&&!pack.landmarks.includes(kind))continue;
