@@ -18,7 +18,11 @@
 }
 :root[data-skin="playground"] body{background:var(--bg)}
 :root[data-skin="playground"] .titlebar{background:linear-gradient(90deg,#fff0e9 0%,#f8a7c3 46%,#d9a5ed 100%);color:#3c2846;border-bottom:3px solid #6c5967}
-:root[data-skin="playground"] .brand{color:#3c2846;text-shadow:2px 2px 0 #fff}
+:root[data-skin="playground"] .brand{color:#3c2846;text-shadow:none}
+.titlebar .brand{color:oklch(.22 .065 345);gap:18px}
+.pixel-wordmark{display:block;flex-shrink:0;width:252px;height:32px;overflow:visible}
+.titlebar .brand small{margin-left:0;color:inherit}
+@media(max-width:800px){.pixel-wordmark{width:189px;height:24px}}
 :root[data-skin="playground"] .version b{border-color:#6c5967}
 :root[data-skin="playground"] .menubar{background:#ead9dc;border-bottom:2px solid #6c5967}
 :root[data-skin="playground"] .left-panel,

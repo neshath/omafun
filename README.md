@@ -4,7 +4,9 @@
 
 ### A tiny retro game studio for making big worlds, pixel by pixel.
 
-[![Tests](https://img.shields.io/badge/tests-30%20passing-a9e45e?style=for-the-badge&labelColor=30283a)](https://github.com/neshath/pixel-forge/actions)
+**[▶ Launch Pixel Forge in your browser](https://neshath.github.io/pixel-forge/)**
+
+[![Linux desktop checks](https://github.com/neshath/pixel-forge/actions/workflows/linux.yml/badge.svg)](https://github.com/neshath/pixel-forge/actions/workflows/linux.yml)
 [![Platform](https://img.shields.io/badge/platform-Omarchy%20%2F%20Linux-ec6e88?style=for-the-badge&labelColor=30283a)](https://github.com/neshath/pixel-forge)
 [![Runtime](https://img.shields.io/badge/runtime-browser%20%2B%20Tauri-5ec7d3?style=for-the-badge&labelColor=30283a)](https://github.com/neshath/pixel-forge)
 [![License](https://img.shields.io/badge/license-MIT-e4edce?style=for-the-badge&labelColor=30283a)](LICENSE)
