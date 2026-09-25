@@ -15,7 +15,7 @@ export function mountWorkbench(api){
  const close=document.createElement('button');close.textContent='×';close.className='mobile-inspector';close.setAttribute('aria-label','Close inspector');
  close.onclick=()=>{document.body.classList.remove('inspector-open');inspect.setAttribute('aria-expanded','false');};
  document.querySelector('.inspector .panel-heading').append(close);
- for(const [id,label]of [['audio','♫ Audio'],['logic','⌘ Logic'],['market','✦ Market']]){
+ for(const [id,label]of [['audio','♫ Audio'],['logic','⌘ Logic'],['market','✦ Market'],['garden','≋ Water']]){
   const button=document.createElement('button');button.dataset.tab=id;button.textContent=label;
   button.onclick=()=>api.setTab(id);tabs.insertBefore(button,document.querySelector('#collapse'));
  }
@@ -27,6 +27,7 @@ export function mountWorkbench(api){
    workspace.classList.toggle('expanded-assets',['garden','audio','logic','files','hud','collisions'].includes(tab));
    document.querySelector('#assets').className='asset-grid';
    if(tab==='market')return market.render();
+   if(tab==='garden')return garden.render();
    return panels.renderAssets(tab);
   },
   completeTutorial(step){api.project.tutorial??=[];if(!api.project.tutorial.includes(step))api.project.tutorial.push(step);},

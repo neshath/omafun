@@ -163,3 +163,6 @@ button.active{background:#70420a;color:#f6d9a0;border-color:#d4870a}
 .garden-settings .garden-options .field{flex:0 0 150px;margin:4px 0;display:flex;flex-direction:column;align-items:stretch;gap:5px}
 .garden-settings .garden-options .field input[type=color]{height:30px;max-width:none;padding:2px}
 .garden-settings .garden-options .field input[type=checkbox]{align-self:flex-start;width:18px;height:18px}
+.garden-settings-tab{padding:18px 14px;overflow:auto;height:100%}
+.garden-settings-tab h3{margin:0 0 6px;color:var(--pink);font-size:10px;letter-spacing:1px}
+.garden-settings-tab>.empty-copy{margin-bottom:14px}
