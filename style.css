@@ -144,3 +144,18 @@
 .statusbar .omarchy-badge{color:#e4ad4c;font-weight:700;letter-spacing:.7px}
 @media (prefers-color-scheme:light){:root:not([data-skin="playground"]) .statusbar .omarchy-badge{color:#8a5608}}
 :root[data-skin="playground"] .statusbar .omarchy-badge{color:#8a5608}
+
+/* Final button pass: use the Omarchy amber/brown states everywhere. */
+button.active{background:#70420a;color:#f6d9a0;border-color:#d4870a}
+.asset.active{background:#70420a;border-color:#e4ad4c}
+.asset.active span{color:#f6d9a0}
+.welcome-actions .primary,.tour-dialog .primary{background:#d4870a;color:#201407;border-color:#70420a}
+.toolrail button.active{background:#d4870a;color:#201407;border-color:#f4d29e}
+:root[data-skin="playground"] button.active{background:#d4870a;color:#201407;border-color:#70420a}
+:root[data-skin="playground"] .toolrail button.active{background:#d4870a;color:#201407;border-color:#70420a}
+:root[data-skin="playground"] .asset.active{background:#d4870a;border-color:#70420a}
+:root[data-skin="playground"] .asset.active span{color:#201407}
+:root[data-skin="playground"] .welcome-actions .primary,
+:root[data-skin="playground"] .tour-dialog .primary{background:#d4870a;color:#201407;border-color:#70420a;box-shadow:3px 3px 0 #70420a}
+:root[data-skin="playground"] #themeToggle,
+:root[data-skin="playground"] #themeToggle[aria-pressed="true"]{background:#d4870a;color:#201407;border-color:#70420a;box-shadow:2px 2px 0 #70420a}
