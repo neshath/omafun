@@ -131,4 +131,4 @@ workbench=mountWorkbench({
  get onion(){return onion},set onion(v){onion=v},get animate(){return animate},set animate(v){animate=v;animationStart=performance.now()/1000},importAudio,updateAudio,removeAudio,
  get grid(){return grid},set grid(v){grid=v},writeCell,point,cell
 });
- initLayout();resize();refresh();fit();requestAnimationFrame(frame);welcome();
+ initLayout();resize();refresh();fit();requestAnimationFrame(frame);requestAnimationFrame(()=>document.body.classList.add('app-ready'));welcome();
