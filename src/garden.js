@@ -61,14 +61,8 @@ function line(c,col,x,y,xx,yy){const d=Math.max(Math.abs(xx-x),Math.abs(yy-y),1)
 export function drawGardenTile(c,id,x,y,time=0,neighbors={},settings={}){
  const p={...gardenColors,...settings};
  if(id===6){
-  // Layered turquoise water: a dark bed, offset aqua planes, broken pixel
-  // ripples, and a few animated caustic glints keep the 16px tile lively.
-  const waterGradient=typeof c.createLinearGradient==='function'&&c.createLinearGradient(x,y,x,y+16);
-  if(waterGradient&&typeof waterGradient.addColorStop==='function'){
-  waterGradient.addColorStop(0,p.light);waterGradient.addColorStop(p.largeWater?.42:.28,p.water);
-  waterGradient.addColorStop(p.largeWater?.82:.7,'#3d9da9');waterGradient.addColorStop(1,p.deep);
-   c.fillStyle=waterGradient;c.fillRect(x,y,16,16);
-  }else{rect(c,p.water,x,y,16,16);}
+  // Crisp flat pixel-water base with broken ripples and animated caustic glints.
+  rect(c,p.water,x,y,16,16);
   rect(c,'#4faeb5',x,y+4,16,7);
   for(let i=0;i<(p.largeWater?6:12);i++){
    const a=hash(x,y,i),b=hash(y,x,i+19),xx=x+a*14,yy=y+2+b*11,len=2+a*5;
