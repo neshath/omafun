@@ -20,3 +20,8 @@ for(const [id,pack] of Object.entries(gardenPacks))test(id+' pack renders and ro
  assert.ok(gardenDepth({...e,y:200})>gardenDepth({...e,y:100}));
  const example=validateExtended(packExampleProject(id));assert.equal(example.scenes[0].biome,id);assert.ok(example.scenes[0].entities.filter(e=>e.packId===id).length>=pack.landmarks.length);
 });
+test('pack examples use distinct deterministic arrangements',()=>{
+ const layouts=Object.keys(gardenPacks).map(id=>packExampleProject(id).scenes[0].entities.filter(e=>e.type==='prop').map(e=>`${e.propKind}:${e.x},${e.y}`).join('|'));
+ assert.equal(new Set(layouts).size,Object.keys(gardenPacks).length);
+ assert.deepEqual(layouts,Object.keys(gardenPacks).map(id=>packExampleProject(id).scenes[0].entities.filter(e=>e.type==='prop').map(e=>`${e.propKind}:${e.x},${e.y}`).join('|')));
+});

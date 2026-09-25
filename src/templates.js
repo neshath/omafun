@@ -43,9 +43,18 @@ export function packExampleProject(id='watergarden'){
  const pack=gardenPacks[id]||gardenPacks.watergarden,p=templateProject('2.5d'),s=p.scenes[0];
  s.biome=id;s.garden={...s.garden,packId:id};
  s.name=pack.name+' sample';p.name=pack.name+' sample';
- for(const e of s.entities)if(e.type==='prop')e.packId=id;
+ const seed=[...id].reduce((n,ch)=>(n*31+ch.charCodeAt(0))>>>0,7);
+ const bridgeLayouts=[[176,200],[96,256],[272,176],[192,304],[80,192],[240,240],[144,160],[288,288],[176,144],[96,320],[256,208]];
+ const [bridgeX,bridgeY]=bridgeLayouts[seed%bridgeLayouts.length];
+ let propIndex=0;
+ for(const e of s.entities)if(e.type==='prop'){
+  e.packId=id;
+  if(e.propKind==='bridge'){e.x=bridgeX;e.y=bridgeY;continue;}
+  e.x=Math.max(-24,Math.min(s.width*16-e.w,e.x+((seed>>3)%7-3)*16+(propIndex%3)*8));
+  e.y=Math.max(0,Math.min(s.height*16-e.h,e.y+((seed>>6)%9-4)*16+(propIndex%2)*16));propIndex++;
+ }
  const landmarks=pack.landmarks||[pack.landmark];
- landmarks.forEach((kind,index)=>{const e=makeGardenProp(kind,112+index*224,352-index*72);e.packId=id;s.entities.push(e);});
+ landmarks.forEach((kind,index)=>{const e=makeGardenProp(kind,72+((seed+index*137)%22)*16,96+((seed+index*83)%22)*16);e.packId=id;s.entities.push(e);});
  s.hud.objective='Explore the '+pack.name+' example and make it your own.';
  return p;
 }
