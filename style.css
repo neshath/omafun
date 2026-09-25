@@ -159,3 +159,7 @@ button.active{background:#70420a;color:#f6d9a0;border-color:#d4870a}
 :root[data-skin="playground"] .tour-dialog .primary{background:#d4870a;color:#201407;border-color:#70420a;box-shadow:3px 3px 0 #70420a}
 :root[data-skin="playground"] #themeToggle,
 :root[data-skin="playground"] #themeToggle[aria-pressed="true"]{background:#d4870a;color:#201407;border-color:#70420a;box-shadow:2px 2px 0 #70420a}
+.garden-settings .garden-options{display:flex;gap:14px;overflow-x:auto;overflow-y:hidden;padding:4px 2px 8px;scrollbar-color:var(--pink) var(--panel)}
+.garden-settings .garden-options .field{flex:0 0 150px;margin:4px 0;display:flex;flex-direction:column;align-items:stretch;gap:5px}
+.garden-settings .garden-options .field input[type=color]{height:30px;max-width:none;padding:2px}
+.garden-settings .garden-options .field input[type=checkbox]{align-self:flex-start;width:18px;height:18px}
