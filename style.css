@@ -74,6 +74,30 @@
 :root[data-skin="playground"] .tour-dialog{border-color:#643b65;box-shadow:7px 7px 0 #241c3b}
 :root[data-skin="playground"] .tour-dialog .primary{background:#f24f96;border-color:#643b65;box-shadow:2px 2px 0 #643b65}
 
+/* Omarchy/desktop system theme: classic skin follows prefers-color-scheme.
+   Playground remains an intentional authored skin until the user switches back. */
+@media (prefers-color-scheme:light){
+  :root:not([data-skin="playground"]){
+    color-scheme:light;
+    --bg:#f4efe7;
+    --panel:#e9e1d6;
+    --raised:#d9cfc2;
+    --line:#9a8e80;
+    --ink:#2d2930;
+    --muted:#665e58;
+    --pink:#c53b68;
+    --green:#4f8b48;
+    --cyan:#247e91;
+    --dark:#d5c8b8;
+    background:var(--bg);
+  }
+  :root:not([data-skin="playground"]) body{background:var(--bg)}
+  :root:not([data-skin="playground"]) .titlebar{color:#fff}
+  :root:not([data-skin="playground"]) .canvas-area{background:#c7b8a7}
+  :root:not([data-skin="playground"]) .canvas-caption{background:#302b32;color:#e8f4e7}
+  :root:not([data-skin="playground"]) dialog{box-shadow:8px 8px 0 rgb(50 43 45 / .35)}
+}
+
 /* Phase 1/2 layout controls */
 :root{--left-panel-width:208px;--right-panel-width:244px;--asset-panel-height:200px}
 .studio{position:relative;grid-template-columns:var(--left-panel-width) minmax(340px,1fr) var(--right-panel-width)}
