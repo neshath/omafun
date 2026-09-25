@@ -15,10 +15,10 @@ export const gardenPacks={
  nightlotus:{name:'Nightlotus · Lantern pools',swatches:['#343e66','#91a5d0','#1e2845','#665272','#a8a1bd','#657f87','#e6a1ce'],tiles:['Night pool','Indigo deck','Lotus bank','Silver path'],landmark:'mushroom'}
 };
 const packLandmarks={
- watergarden:['fountain','lotus'],moonfen:['mushroom','reeds'],desertstone:['cactus','palm'],
- frostbloom:['crystal','rock'],emberroot:['crystal','rock'],sakuravale:['tree','lotus'],
+ watergarden:['fountain','willow'],moonfen:['mushroom','willow'],desertstone:['cactus','palm'],
+ frostbloom:['crystal','rock'],emberroot:['crystal','rock'],sakuravale:['sakura','lotus'],
  copperquay:['gear','reeds'],amethyst:['crystal','mushroom'],sunharbor:['tree','palm'],
- autumnmere:['tree','rock'],nightlotus:['mushroom','lotus']
+ autumnmere:['oak','rock'],nightlotus:['mushroom','lotus']
 };
 for(const [id,landmarks] of Object.entries(packLandmarks))gardenPacks[id].landmarks=landmarks;
 function shade(hex,factor){return '#'+hex.slice(1).match(/../g).map(x=>Math.min(255,Math.round(parseInt(x,16)*factor)).toString(16).padStart(2,'0')).join('');}
@@ -29,6 +29,9 @@ export function gardenTheme(id='watergarden'){
 }
 export const gardenProps={
  tree:{name:'Canopy tree',w:32,h:24,elevation:0,solid:true},
+ oak:{name:'Oak tree',w:40,h:28,elevation:0,solid:true},
+ sakura:{name:'Sakura tree',w:36,h:26,elevation:0,solid:true},
+ willow:{name:'Willow tree',w:36,h:28,elevation:0,solid:true},
  cactus:{name:'Oasis cactus',w:24,h:20,elevation:0,solid:true},
  crystal:{name:'Crystal spire',w:28,h:24,elevation:0,solid:true},
  mushroom:{name:'Glow mushroom',w:28,h:20,elevation:0,solid:true},
@@ -81,9 +84,15 @@ export function drawGardenProp(c,e,time=0,part='all',settings={}){
  const kind=e.propKind,x=e.x,y=e.y,w=e.w,h=e.h,z=e.elevation||0,p={...gardenTheme(e.packId),...settings};
  if(e.visible===false||e.dead)return;
  c.save();c.translate(Math.round(x),Math.round(y-(kind==='bridge'?0:z)));
- if(['tree','cactus','crystal','mushroom','gear'].includes(kind)){
+ if(['tree','oak','sakura','willow','cactus','crystal','mushroom','gear'].includes(kind)){
   oval(c,p.deep,-3,h-5,w+6,10);
-  if(kind==='tree'){rect(c,p.woodDark,w/2-4,h-36,8,36);for(const [xx,yy,ww,hh]of [[-12,-32,w+24,30],[-6,-48,w+12,30],[2,-58,w-4,24]]){oval(c,p.leafDark,xx,yy+3,ww,hh);oval(c,p.leaf,xx,yy,ww,hh-4);oval(c,p.leafLight,xx+5,yy+3,ww/2,hh/3);}}
+  if(['tree','oak','sakura','willow'].includes(kind)){
+   rect(c,p.woodDark,w/2-4,h-36,8,36);
+   const crowns=kind==='oak'?[[-18,-34,w+36,36],[-10,-54,w+20,34],[5,-48,w-2,30]]:kind==='sakura'?[[-15,-35,w+30,34],[-4,-55,w+10,34],[10,-40,w-4,27]]:kind==='willow'?[[-13,-36,w+26,32],[-7,-52,w+14,28],[4,-43,w,27]]:[[-12,-32,w+24,30],[-6,-48,w+12,30],[2,-58,w-4,24]];
+   for(const [xx,yy,ww,hh]of crowns){oval(c,p.leafDark,xx,yy+3,ww,hh);oval(c,p.leaf,xx,yy,ww,hh-4);oval(c,p.leafLight,xx+5,yy+3,ww/2,hh/3);}
+   if(kind==='sakura')for(const [xx,yy]of [[-8,-34],[8,-47],[22,-28],[3,-62]]){rect(c,p.pink,xx,yy,5,5);rect(c,p.cream,xx+2,yy-2,2,2);}
+   if(kind==='willow')for(let i=0;i<7;i++){const xx=2+i*5;line(c,p.leafDark,xx,-34,xx-3+(i%2)*5,4);line(c,p.leaf,xx+1,-31,xx-2+(i%2)*5,2);}
+  }
   if(kind==='cactus'){rect(c,p.leafDark,8,-28,10,h+28);rect(c,p.leaf,9,-29,6,h+28);rect(c,p.leaf,0,-12,10,7);rect(c,p.leaf,0,-23,5,15);rect(c,p.leaf,16,-3,9,6);rect(c,p.leaf,21,-16,5,18);rect(c,p.pink,9,-32,6,4);}
   if(kind==='crystal'){poly(c,p.stoneDark,[[0,h],[4,-8],[w/2,-40],[w-4,-5],[w,h]]);poly(c,p.light,[[4,-8],[w/2,-40],[w/2,h],[0,h]]);poly(c,p.pink,[[w/2,-40],[w-4,-5],[w,h],[w/2,h]]);line(c,p.cream,w/2,-40,w/2,h);}
   if(kind==='mushroom'){rect(c,p.stoneDark,w/2-5,-12,10,h+12);rect(c,p.cream,w/2-4,-12,4,h+10);oval(c,p.deep,-8,-24,w+16,24);oval(c,p.pink,-8,-29,w+16,23);for(let i=0;i<5;i++)rect(c,p.cream,-2+i*7,-23+(i%2)*6,4,3);}

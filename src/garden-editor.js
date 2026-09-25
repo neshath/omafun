@@ -17,7 +17,7 @@ export function createGardenEditor(api){
    const c=node('canvas');c.width=c.height=32;const ctx=c.getContext('2d');ctx.scale(1.5,1.5);drawGardenTile(ctx,id,3,3,0,{},theme);b.append(c,node('span','',name));grid.append(b);
   }
   for(const [kind,d]of Object.entries(gardenProps)){
-   if(['tree','cactus','crystal','mushroom','gear'].includes(kind)&&!pack.landmarks.includes(kind))continue;
+   if(['tree','oak','sakura','willow','cactus','crystal','mushroom','gear'].includes(kind)&&!pack.landmarks.includes(kind))continue;
    if(query&&!(pack.name+' '+d.name).toLowerCase().includes(query))continue;
    const b=button('',()=>{chosen=kind;api.selected=null;api.layerId='entities';api.setTool('garden-prop');api.renderLayers();api.note('Click the scene to place '+d.name+'. V selects and moves props.');},'asset');
    const c=node('canvas');c.width=c.height=32;const ctx=c.getContext('2d'),scale=Math.min(28/d.w,26/(d.h+d.elevation+28));ctx.translate(16,17);ctx.scale(scale,scale);drawGardenProp(ctx,{...makeGardenProp(kind,0,0),x:-d.w/2,y:-d.h/2+12,packId:api.scene.biome});
