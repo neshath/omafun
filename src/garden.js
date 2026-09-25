@@ -14,6 +14,13 @@ export const gardenPacks={
  autumnmere:{name:'Autumnmere · Orchard',swatches:['#668582','#c2cfad','#3b575b','#a36a41','#d7bc91','#c68b49','#d57954'],tiles:['Still water','Walnut deck','Amber bank','Ochre path'],landmark:'tree'},
  nightlotus:{name:'Nightlotus · Lantern pools',swatches:['#343e66','#91a5d0','#1e2845','#665272','#a8a1bd','#657f87','#e6a1ce'],tiles:['Night pool','Indigo deck','Lotus bank','Silver path'],landmark:'mushroom'}
 };
+const packLandmarks={
+ watergarden:['fountain','lotus'],moonfen:['mushroom','reeds'],desertstone:['cactus','palm'],
+ frostbloom:['crystal','rock'],emberroot:['crystal','rock'],sakuravale:['tree','lotus'],
+ copperquay:['gear','reeds'],amethyst:['crystal','mushroom'],sunharbor:['tree','palm'],
+ autumnmere:['tree','rock'],nightlotus:['mushroom','lotus']
+};
+for(const [id,landmarks] of Object.entries(packLandmarks))gardenPacks[id].landmarks=landmarks;
 function shade(hex,factor){return '#'+hex.slice(1).match(/../g).map(x=>Math.min(255,Math.round(parseInt(x,16)*factor)).toString(16).padStart(2,'0')).join('');}
 export function gardenTheme(id='watergarden'){
  const pack=gardenPacks[id]||gardenPacks.watergarden;if(pack.colors)return pack.colors;

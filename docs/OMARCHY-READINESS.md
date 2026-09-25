@@ -7,6 +7,7 @@
 - Standalone HTML for platformer, top-down, and every pack compiles and starts without a server in a mocked DOM/Canvas harness. This is not a browser performance measurement.
 - Native adapter cancellation, read, write, and error behavior pass using mocked Tauri APIs. Native command permissions explicitly enable read/write text commands; file paths are granted by user dialogs.
 - Desktop frontend staging and PKGBUILD shell syntax checked.
+- Browser QA: all eleven environment options loaded from the dropdown; each showed four themed materials plus its landmark set, with a refreshed Nightlotus thumbnail/map frame inspected at editor scale.
 
 ## Linux build gate
 
