@@ -124,3 +124,12 @@
 /* Audio v1 library */
 .audio-library{padding:14px;display:flex;flex-direction:column;gap:12px;overflow:auto;max-height:100%}.audio-help{margin:0;color:var(--muted);font-size:10px;line-height:1.6}.audio-section{border-top:1px solid var(--line);padding-top:10px}.audio-section-heading{display:flex;justify-content:space-between;align-items:center;font-size:10px;letter-spacing:1px;color:var(--muted);margin-bottom:8px}.audio-section-heading span{font-size:9px}.audio-card{display:grid;grid-template-columns:minmax(120px,1fr) minmax(180px,280px) auto;gap:10px;align-items:center;border:1px solid var(--line);background:var(--raised);padding:8px;margin:6px 0}.audio-meta{display:flex;flex-direction:column;gap:4px;min-width:0}.audio-meta strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}.audio-meta small{color:var(--muted);font-size:9px}.audio-card audio{width:100%;height:28px}.audio-card .panel-actions{align-items:center;flex-wrap:wrap}.audio-card .field{margin:0;font-size:9px;gap:5px}.audio-loop{display:flex;align-items:center}.audio-loop input{accent-color:var(--pink)}
 @media(max-width:900px){.audio-card{grid-template-columns:1fr}.audio-card .panel-actions{justify-content:flex-start}}
+
+/* Omarchy-inspired wordmark treatment: matte black pixel lettering over warm
+   stepped amber bands, echoing the supplied reference without shipping it. */
+.titlebar{background:linear-gradient(to bottom,#f4d29e 0 25%,#efb454 25% 50%,#ed9209 50% 75%,#9b610c 75% 100%);color:#050505;border-bottom:2px solid #4b2c08}
+.titlebar .brand{color:#050505;text-shadow:2px 2px 0 rgb(255 232 187 / .28)}
+.titlebar .brand small,.titlebar .version{color:#050505}
+.titlebar .version b{border-color:#050505}
+:root[data-skin="playground"] .titlebar{background:linear-gradient(to bottom,#f4d29e 0 25%,#efb454 25% 50%,#ed9209 50% 75%,#9b610c 75% 100%);color:#050505;border-bottom:2px solid #4b2c08}
+:root[data-skin="playground"] .titlebar .brand{color:#050505;text-shadow:2px 2px 0 rgb(255 232 187 / .28)}
