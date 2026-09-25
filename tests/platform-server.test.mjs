@@ -14,7 +14,8 @@ test('desktop file bridge uses Tauri globals without runtime imports', () => {
   assert.equal(tauriConfig.app.withGlobalTauri, true);
 });
 
-test('development server binds only to loopback', () => {
-  assert.match(serverSource, /\.listen\(4173,\s*['"]127\.0\.0\.1['"]/);
-  assert.doesNotMatch(serverSource, /\.listen\(4173,\s*['"]0\.0\.0\.0['"]/);
+test('development server defaults to loopback and supports explicit preview hosting', () => {
+  assert.match(serverSource, /const\s+host\s*=\s*process\.env\.HOST\s*\|\|\s*['"]127\.0\.0\.1['"]/);
+  assert.match(serverSource, /\.listen\(port,\s*host,/);
+  assert.doesNotMatch(serverSource, /['"]0\.0\.0\.0['"]/);
 });

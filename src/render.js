@@ -305,11 +305,12 @@ export function drawScene(c, s, options = {}) {
   } = options;
   if (!(scale > 0)) return;
   const p = scenePalette(s), layers = s.layers || [];
-  const backgroundLayer = layers.find(l => l.id === 'background');
   c.save();
   c.imageSmoothingEnabled = false;
   c.clearRect(0, 0, width, height);
-  if (!backgroundLayer) background(c, s, -x, -y, scale, width, height, time);
+  // Every project has a background layer for editable tiles, but an empty layer
+  // must not suppress the procedural biome backdrop behind the tilemap.
+  background(c, s, -x, -y, scale, width, height, time);
   const left = Math.max(0, Math.floor(-Math.round(x) / scale / 16));
   const top = Math.max(0, Math.floor(-Math.round(y) / scale / 16));
   const right = Math.min(s.width - 1, Math.floor((width - Math.round(x)) / scale / 16));
@@ -336,7 +337,6 @@ export function drawScene(c, s, options = {}) {
   };
   for (const layer of layers) {
     if (layer.visible === false) continue;
-    if (layer.id === 'background') background(c, s, -x, -y, scale, width, height, time);
     world(() => {
       const map = layer.tiles || {};
       eachCell((a, b, key) => {
