@@ -26,7 +26,9 @@ export function createGardenEditor(api){
   const count=document.querySelector('#assetCount');count.textContent=(parseInt(count.textContent,10)+grid.childElementCount)+' assets';host.append(grid);if(!active())return true;
   host.append(button('＋ Add '+pack.name+' example scene',()=>change(()=>{const example=packExampleProject(api.scene.biome);api.project.scenes.push(example.scenes[0]);api.project.activeScene=api.project.scenes.length-1;}),'pack-example'));
   const settings=node('details','garden-settings');settings.append(node('summary','','Water settings'));const options=node('div','garden-options');for(const [key,label]of [['water','Water'],['light','Caustic highlights'],['deep','Depth tint']])field(options,label,(api.scene.garden.packId===api.scene.biome?api.scene.garden[key]:undefined)||theme[key],v=>change(()=>{if(api.scene.garden.packId!==api.scene.biome)Object.assign(api.scene.garden,{water:theme.water,light:theme.light,deep:theme.deep,packId:api.scene.biome});api.scene.garden[key]=v;}),{type:'color'});
-  field(options,'Animate water',api.scene.garden.animate,v=>change(()=>api.scene.garden.animate=v));settings.append(options);host.append(settings);return true;
+  field(options,'Animate water',api.scene.garden.animate,v=>change(()=>api.scene.garden.animate=v));
+  field(options,'Large water tiles',!!api.scene.garden.largeWater,v=>change(()=>api.scene.garden.largeWater=v));
+  settings.append(options);host.append(settings);return true;
  }
  return {render,
   pointerDown(event,a){if(api.mode!=='world'||api.runtime||api.tool!=='garden-prop'||event.button!==0||api.keys.has(' '))return false;
