@@ -61,9 +61,20 @@ function line(c,col,x,y,xx,yy){const d=Math.max(Math.abs(xx-x),Math.abs(yy-y),1)
 export function drawGardenTile(c,id,x,y,time=0,neighbors={},settings={}){
  const p={...gardenColors,...settings};
  if(id===6){
-  rect(c,p.water,x,y,16,16);
-  for(let i=0;i<18;i++){const a=hash(x,y,i),b=hash(y,x,i+19);rect(c,i%3===0?p.deep:'#58b7bd',x+a*15,y+b*15,2+a*3,1); }
-  const t=Math.floor(time*5);for(let i=0;i<4;i++){const xx=(i*7+x/16+t)%16,yy=(i*5+y/16+t)%16;rect(c,p.light,x+xx,y+yy,3,1);rect(c,'#69c5c9',x+xx+1,y+yy+1,1,2);}return;
+  // Layered turquoise water: a dark bed, offset aqua planes, broken pixel
+  // ripples, and a few animated caustic glints keep the 16px tile lively.
+  rect(c,p.deep,x,y,16,16);rect(c,p.water,x,y+1,16,14);rect(c,'#4faeb5',x,y+4,16,7);
+  for(let i=0;i<12;i++){
+   const a=hash(x,y,i),b=hash(y,x,i+19),xx=x+a*14,yy=y+2+b*11,len=2+a*5;
+   rect(c,i%3===0?p.deep:'#69bec0',xx,yy,len,1);
+   if(i%4===0)rect(c,p.light,xx+1,yy+1,Math.max(1,len-2),1);
+  }
+  const t=Math.floor(time*5);
+  for(let i=0;i<3;i++){
+   const xx=(i*7+x/16+t)%18-1,yy=(i*5+y/16+t*2)%16;
+   rect(c,p.light,x+xx,y+yy,3,1);rect(c,'#b8eee0',x+xx+1,y+yy+1,2,1);
+  }
+  return;
  }
  if(id===19){
   rect(c,p.woodDark,x,y,16,16);
