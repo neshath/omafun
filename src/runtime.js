@@ -5,7 +5,7 @@ import {drawScene} from './render.js';
 const runtimeOverlap=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
 const runtimeNumber=(v,f)=>v!==''&&v!=null&&Number.isFinite(Number(v))?Number(v):f;
 const runtimeHostile=e=>e.type==='enemy'||e.type==='boss';
-const runtimeOverhead=new Set(['topdown','arcade','beat-em-up','dungeon','boss-arena']);
+const runtimeOverhead=new Set(['topdown','2.5d','arcade','beat-em-up','dungeon','boss-arena']);
 
 export class Runtime {
   constructor(scene,projectData) {

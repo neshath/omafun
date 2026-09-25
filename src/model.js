@@ -14,7 +14,7 @@ export function fill(map,x,y,value,w,h){const old=map[`${x},${y}`]||0;if(old===v
 export class History{constructor(){this.past=[];this.future=[];}push(p){this.past.push(clone(p));if(this.past.length>80)this.past.shift();this.future=[];}undo(p){if(!this.past.length)return p;this.future.push(clone(p));return this.past.pop();}redo(p){if(!this.future.length)return p;this.past.push(clone(p));return this.future.pop();}}
 
 // Additive schema extensions preserve all v1 project files.
-export const gameTypes={platformer:'Platformer',topdown:'Top-down adventure',arcade:'Arcade action','beat-em-up':"Beat ’em up",'run-and-gun':'Run and gun',dungeon:'Dungeon exploration',puzzle:'Puzzle platformer','boss-arena':'Boss arena'};
+export const gameTypes={platformer:'Platformer',topdown:'Top-down adventure','2.5d':'2.5D water world',arcade:'Arcade action','beat-em-up':"Beat ’em up",'run-and-gun':'Run and gun',dungeon:'Dungeon exploration',puzzle:'Puzzle platformer','boss-arena':'Boss arena'};
 export const biomeNames={forest:'Moonfern · Forest',ice:'Frostglass · Mountains',crystal:'Prismwell · Crystal cave',jungle:'Sunroot · Jungle',ruins:'Lost arch · Ruins',temple:'Understone · Temple',city:'Nightwire · City',factory:'Rivetline · Factory',lab:'Voltwell · Laboratory',lava:'Embervault · Lava',haunted:'Hollowbough · Haunted forest',desert:'Copperwind · Canyon',coast:'Stormwatch · Coast'};
 Object.assign(palettes,{
  crystal:['#121425','#222342','#363659','#494578','#646195','#8989bc','#b7b4eb','#efdefc','#302740','#514369','#79618c','#ad83b1','#89e8ef','#f3f3ff','#dbb468','#e885bf'],

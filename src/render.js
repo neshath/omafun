@@ -333,7 +333,10 @@ export function drawScene(c, s, options = {}) {
     }
   };
   const paintEntities = () => {
-    for (const e of entities) drawEntity(c, e, p, time, entityOptions);
+    const ordered = s.gameType === '2.5d'
+      ? [...entities].sort((a, b) => (a.y + (a.h || 16)) - (b.y + (b.h || 16)))
+      : entities;
+    for (const e of ordered) drawEntity(c, e, p, time, entityOptions);
   };
   for (const layer of layers) {
     if (layer.visible === false) continue;
