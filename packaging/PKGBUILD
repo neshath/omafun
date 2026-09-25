@@ -7,13 +7,13 @@ arch=('x86_64' 'aarch64')
 url='https://github.com/neshath/pixel-forge'
 license=('MIT')
 depends=('webkit2gtk-4.1')
-makedepends=('git' 'nodejs' 'npm' 'rust')
+makedepends=('git' 'nodejs' 'npm' 'rust' 'pkgconf')
 source=("git+${url}.git#commit=${PIXEL_FORGE_COMMIT:-main}")
 sha256sums=('SKIP')
 
 prepare() {
   cd "${srcdir}/pixel-forge"
-  npm install --ignore-scripts --no-audit --no-fund --include=dev
+  npm ci --ignore-scripts --no-audit --no-fund --include=dev
 }
 
 build() {

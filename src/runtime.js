@@ -108,7 +108,7 @@ export class Runtime {
   // Small axis sweeps also protect fast bodies against tunnelling through thin walls.
   moveBody(body,dx,dy,{oneWay=!this.overhead,entities=true}={}) {
     let grounded=false,blockedX=false,blockedY=false;
-    const blockers=entities?this.scene.entities.filter(e=>e!==body&&!e.dead&&(e.type==='platform'||e.type==='breakable'||(['door','transition'].includes(e.type)&&e.locked&&!e.open))):[];
+    const blockers=entities?this.scene.entities.filter(e=>e!==body&&!e.dead&&((e.type==='prop'&&e.solid&&e.visible!==false)||e.type==='platform'||e.type==='breakable'||(['door','transition'].includes(e.type)&&e.locked&&!e.open))):[];
     for(const axis of ['x','y']){
       const amount=axis==='x'?dx:dy,count=Math.max(1,Math.ceil(Math.abs(amount)/4)),step=amount/count;
       for(let i=0;i<count;i++){

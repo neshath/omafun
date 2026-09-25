@@ -15,7 +15,7 @@ export async function buildGameHTML(projectData,sceneId,sourceLoader=globalThis.
   const project=JSON.parse(buildProjectPackage(projectData));
   const scene=sceneId===undefined?project.scenes[project.activeScene]:project.scenes.find(s=>s.id===sceneId);
   if(!scene)throw Error('Scene not found');
-  const modules=new Map(),visiting=new Set(),allowed=new Set(['model.js','render.js','runtime.js','logic.js','art.js']);
+  const modules=new Map(),visiting=new Set(),allowed=new Set(['model.js','render.js','runtime.js','logic.js','art.js','garden.js']);
   async function bundle(name){
     if(modules.has(name))return;if(visiting.has(name))throw Error('Circular source dependency: '+name);
     if(!allowed.has(name))throw Error('Unsupported source module: '+name);

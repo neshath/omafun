@@ -8,7 +8,7 @@ test('puzzle platformers use gravity while arcade templates use overhead control
  s.gameType='arcade';assert.equal(new Runtime(s,p).overhead,true);
 });
 test('2.5D water-world templates use overhead movement and validate as editable projects',()=>{
- const p=templateProject('2.5d'),s=p.scenes[0];assert.equal(s.gameType,'2.5d');assert.equal(s.biome,'coast');assert.ok(Object.keys(s.layers[0].tiles).length>100);assert.ok(s.entities.some(e=>e.type==='platform'));assert.equal(new Runtime(s,p).overhead,true);assert.doesNotThrow(()=>validateExtended(JSON.parse(JSON.stringify(p))));
+ const p=templateProject('2.5d'),s=p.scenes[0];assert.equal(s.gameType,'2.5d');assert.equal(s.biome,'watergarden');assert.ok(s.garden);assert.ok(s.entities.some(e=>e.propKind==='bridge'));assert.equal(new Runtime(s,p).overhead,true);assert.doesNotThrow(()=>validateExtended(JSON.parse(JSON.stringify(p))));
 });
 test('lava joins spikes as damage terrain and palette events support expanded environments',()=>{
  const p=project(true),s=p.scenes[0];s.layers.find(l=>l.id==='terrain').tiles['0,0']=16;

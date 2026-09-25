@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
+import {templateProject} from '../src/templates.js';
+import {gardenPacks} from '../src/garden.js';
 import {project} from '../src/model.js';
 import {ProjectStore,STORAGE_KEY,LEGACY_KEY} from '../src/storage.js';
 import {buildGameHTML,buildProjectPackage} from '../src/export.js';
@@ -73,8 +75,8 @@ test('invalid input and corrupt persisted JSON never reset existing data',()=>{
   storage.setItem(STORAGE_KEY,'broken');assert.throws(()=>store.list());assert.equal(storage.getItem(STORAGE_KEY),'broken');
 });
 const fsLoader=url=>readFile(new URL(url),'utf8');
-test('actual app sources bundle, compile and start offline with full project',async()=>{
-  const p=project(true);p.settings={volume:.5};p.assets=[];p.events=[];
+for(const format of ['platformer','topdown','2.5d',...Object.keys(gardenPacks)])test('actual '+format+' sources bundle, compile and start offline with full project',async()=>{
+  const p=templateProject(gardenPacks[format]?'2.5d':format);if(gardenPacks[format])p.scenes[0].biome=format;p.settings={volume:.5};p.assets=[];p.events=[];
   p.name='Test </script><script>throw Error("injection")</script> & title';
   const requested=[];const html=await buildGameHTML(p,undefined,async url=>{requested.push(url);return fsLoader(url);});
   assert.ok(requested.some(url=>url.endsWith('/runtime.js')));assert.equal(new Set(requested).size,requested.length);

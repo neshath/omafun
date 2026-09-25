@@ -1,4 +1,5 @@
-import { palettes } from './model.js';
+import {drawGardenTile,drawGardenProp,gardenDepth,gardenTheme} from './garden.js';
+import { palettes,collisionAt } from './model.js';
 
 const biomeFamilies = {
   jungle: 'forest', ruins: 'forest', temple: 'forest', haunted: 'forest',
@@ -30,6 +31,7 @@ function aroundCenter(c, x, y, w, h, transform, paint) {
 
 // Optional adjacency preserves compatibility with existing six-argument calls.
 export function drawTile(c, id, x, y, p = palettes.forest, phase = 0, edges = {}) {
+  if([19,20,21].includes(id)){drawGardenTile(c,id,x,y,phase,edges);return;}
   const r = pixelPen(c, x, y, p);
   if (id <= 10) {
     if ((id === 1 || id === 2) && edges.top === false) {
@@ -188,6 +190,7 @@ function paintExtraEntity(c, e, p, time) {
 }
 
 export function drawEntity(c, e, p = palettes.forest, time = 0, options = {}) {
+  if(e.type==='prop'){drawGardenProp(c,e,time);return;}
   if (e.visible === false || e.dead) return;
   const custom = options.customSprite || options.project?.sprite;
   const sprite = e.spriteId === 'custom' || e.type === 'custom'
@@ -298,19 +301,21 @@ function defaultSolid(id) {
 }
 
 export function drawScene(c, s, options = {}) {
-  const {
+  let {
     x = 0, y = 0, scale = 1, width = c.canvas.width, height = c.canvas.height,
     grid = false, collisions = false, camera = false, selected = null,
     time = 0, entities = s.entities || [], paths = false
   } = options;
   if (!(scale > 0)) return;
+  if(s.garden?.animate===false)time=0;
+  const gardenStyle={...gardenTheme(s.biome),...(s.garden?.packId===s.biome||s.biome==='watergarden'?s.garden:{})};
   const p = scenePalette(s), layers = s.layers || [];
   c.save();
   c.imageSmoothingEnabled = false;
   c.clearRect(0, 0, width, height);
   // Every project has a background layer for editable tiles, but an empty layer
   // must not suppress the procedural biome backdrop behind the tilemap.
-  background(c, s, -x, -y, scale, width, height, time);
+  if(!s.garden)background(c, s, -x, -y, scale, width, height, time);
   const left = Math.max(0, Math.floor(-Math.round(x) / scale / 16));
   const top = Math.max(0, Math.floor(-Math.round(y) / scale / 16));
   const right = Math.min(s.width - 1, Math.floor((width - Math.round(x)) / scale / 16));
@@ -333,11 +338,21 @@ export function drawScene(c, s, options = {}) {
     }
   };
   const paintEntities = () => {
+    if(s.garden){
+      for(const e of entities)if(e.type==='prop'&&e.propKind==='bridge')drawGardenProp(c,e,time,'back',gardenTheme(e.packId||s.biome));
+      for(const e of [...entities].sort((a,b)=>gardenDepth(a)-gardenDepth(b))){
+        if(e.type==='prop'){drawGardenProp(c,e,time,e.propKind==='bridge'?'front':'all',gardenTheme(e.packId||s.biome));continue;}
+        const bridge=entities.find(b=>b.type==='prop'&&b.propKind==='bridge'&&b.visible!==false&&e.x+e.w/2>=b.x&&e.x+e.w/2<b.x+b.w&&e.y+e.h>=b.y+8&&e.y+e.h<b.y+b.h-8);
+        const lift=bridge?Math.sin((e.x+e.w/2-bridge.x)/bridge.w*Math.PI)*bridge.elevation:0;
+        c.save();c.translate(0,-Math.round(lift));drawEntity(c,e,p,time,entityOptions);c.restore();
+      }return;
+    }
     const ordered = s.gameType === '2.5d'
       ? [...entities].sort((a, b) => (a.y + (a.h || 16)) - (b.y + (b.h || 16)))
       : entities;
     for (const e of ordered) drawEntity(c, e, p, time, entityOptions);
   };
+  if(s.garden)world(()=>eachCell((a,b)=>drawGardenTile(c,6,a*16,b*16,time,{},gardenStyle)));
   for (const layer of layers) {
     if (layer.visible === false) continue;
     world(() => {
@@ -345,6 +360,7 @@ export function drawScene(c, s, options = {}) {
       eachCell((a, b, key) => {
         const id = map[key];
         if (!id) return;
+        if(s.garden&&[6,19,20,21].includes(id)){drawGardenTile(c,id,a*16,b*16,time,{bottom:map[a+','+(b+1)]===id,left:map[(a-1)+','+b]===id},gardenStyle);return;}
         const edges = { top: !solid(map[a + ',' + (b - 1)]) };
         const transform = s.tileTransforms?.[key];
         if (transform) {
@@ -370,7 +386,7 @@ export function drawScene(c, s, options = {}) {
     }
     if (collisions) {
       eachCell((a, b, key) => {
-        const enabled = s.collision?.[key] ?? layers.some(l => l.visible !== false && solid(l.tiles?.[key]));
+        const enabled = s.garden ? collisionAt(s,a,b)>0 : s.collision?.[key] ?? layers.some(l => l.visible !== false && solid(l.tiles?.[key]));
         if (!enabled) return;
         c.fillStyle = '#67f5d238'; c.strokeStyle = '#67f5d2aa';
         c.fillRect(a * 16, b * 16, 16, 16); c.strokeRect(a * 16, b * 16, 16, 16);
