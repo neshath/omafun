@@ -57,6 +57,19 @@
 :root[data-skin="playground"] .pink{color:#d82f7c}
 :root[data-skin="playground"] .signal{color:#679c31}
 
+/* Optional guided tour */
+.tour-dialog{width:min(420px,calc(100vw - 36px));padding:25px 28px 22px;border:2px solid var(--pink);box-shadow:6px 6px 0 oklch(.1 0 0 / .7)}
+.tour-kicker{display:flex;justify-content:space-between;gap:16px;color:var(--pink);font-size:9px;letter-spacing:1.5px;margin-bottom:14px}
+.tour-kicker span{color:var(--muted);letter-spacing:0}
+.tour-dialog h2{font-size:20px;margin-bottom:10px}
+.tour-dialog p{font-size:11px;min-height:54px}
+.tour-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:22px}
+.tour-actions .quiet{margin-right:auto}
+.tour-dialog .primary{background:var(--pink);color:white;border-color:var(--pink);font-weight:bold}
+.tour-highlight{position:relative;z-index:1001!important;outline:3px solid var(--cyan)!important;outline-offset:3px!important;box-shadow:0 0 0 6px oklch(.1 0 0 / .55),0 0 18px var(--cyan)!important}
+:root[data-skin="playground"] .tour-dialog{border-color:#643b65;box-shadow:7px 7px 0 #241c3b}
+:root[data-skin="playground"] .tour-dialog .primary{background:#f24f96;border-color:#643b65;box-shadow:2px 2px 0 #643b65}
+
 /* Phase 1/2 layout controls */
 :root{--left-panel-width:208px;--right-panel-width:244px;--asset-panel-height:200px}
 .studio{position:relative;grid-template-columns:var(--left-panel-width) minmax(340px,1fr) var(--right-panel-width)}
