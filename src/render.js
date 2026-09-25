@@ -1,4 +1,4 @@
-import {drawGardenTile,drawGardenProp,gardenDepth,gardenTheme} from './garden.js';
+import {drawGardenTile,drawGardenProp,drawGardenWeather,gardenDepth,gardenTheme} from './garden.js';
 import { palettes,collisionAt } from './model.js';
 
 const biomeFamilies = {
@@ -340,9 +340,9 @@ export function drawScene(c, s, options = {}) {
   };
   const paintEntities = () => {
     if(s.garden){
-      for(const e of entities)if(e.type==='prop'&&e.propKind==='bridge')drawGardenProp(c,e,time,'back',gardenTheme(e.packId||s.biome));
+      for(const e of entities)if(e.type==='prop'&&e.propKind==='bridge')drawGardenProp(c,e,time,'back',{...gardenTheme(e.packId||s.biome),weather:s.garden?.weather});
       for(const e of [...entities].sort((a,b)=>gardenDepth(a)-gardenDepth(b))){
-        if(e.type==='prop'){drawGardenProp(c,e,time,e.propKind==='bridge'?'front':'all',gardenTheme(e.packId||s.biome));continue;}
+        if(e.type==='prop'){drawGardenProp(c,e,time,e.propKind==='bridge'?'front':'all',{...gardenTheme(e.packId||s.biome),weather:s.garden?.weather});continue;}
         const bridge=entities.find(b=>b.type==='prop'&&b.propKind==='bridge'&&b.visible!==false&&e.x+e.w/2>=b.x&&e.x+e.w/2<b.x+b.w&&e.y+e.h>=b.y+8&&e.y+e.h<b.y+b.h-8);
         const lift=bridge?Math.sin((e.x+e.w/2-bridge.x)/bridge.w*Math.PI)*bridge.elevation:0;
         c.save();c.translate(0,-Math.round(lift));drawEntity(c,e,p,time,entityOptions);c.restore();
@@ -421,6 +421,7 @@ export function drawScene(c, s, options = {}) {
     }
     c.strokeStyle = '#78958755'; c.strokeRect(0, 0, s.width * 16, s.height * 16);
   });
+  if(s.garden?.weather&&s.garden.weather!=='clear')drawGardenWeather(c,s.garden.weather,time,width,height);
   c.restore();
 }
 

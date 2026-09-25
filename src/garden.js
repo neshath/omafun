@@ -58,6 +58,19 @@ function oval(c,col,x,y,w,h){for(let j=0;j<h;j++){const q=Math.sqrt(Math.max(0,1
 function poly(c,col,points){c.fillStyle=col;c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(Math.round(x),Math.round(y)):c.moveTo(Math.round(x),Math.round(y)));c.closePath();c.fill();}
 function line(c,col,x,y,xx,yy){const d=Math.max(Math.abs(xx-x),Math.abs(yy-y),1);for(let i=0;i<=d;i++)rect(c,col,x+(xx-x)*i/d,y+(yy-y)*i/d,1,1);}
 
+export function drawGardenWeather(c,weather,time=0,width=c.canvas?.width||0,height=c.canvas?.height||0){
+ if(!weather||weather==='clear'||width<=0||height<=0)return;
+ c.save();c.imageSmoothingEnabled=false;
+ if(weather==='rain'){
+  c.globalAlpha=.58;c.strokeStyle='#b7eff0';c.lineWidth=1;
+  for(let i=0;i<96;i++){const x=(hash(i,17)*width+(time*150+i*11))%(width+24)-12,y=(hash(i,31)*height+(time*260+i*17))%(height+20)-20;c.beginPath();c.moveTo(x,y);c.lineTo(x-3,y+10);c.stroke();}
+ }else if(weather==='snow'){
+  c.globalAlpha=.82;c.fillStyle='#fff8e5';
+  for(let i=0;i<72;i++){const x=(hash(i,43)*width+Math.sin(time*.7+i)*10)%(width+8)-4,y=(hash(i,59)*height+(time*34+i*13))%(height+8)-4,s=i%5===0?3:2;rect(c,'#fff8e5',x,y,s,s);}
+ }
+ c.restore();
+}
+
 export function drawGardenTile(c,id,x,y,time=0,neighbors={},settings={}){
  const p={...gardenColors,...settings};
  if(id===6){
@@ -120,6 +133,7 @@ export function drawGardenProp(c,e,time=0,part='all',settings={}){
    for(let i=0;i<w;i+=12){const a=arch(i);rect(c,p.stoneDark,i,h-20-a,5,22);rect(c,p.cream,i,h-20-a,2,20);}
    for(let i=0;i<w;i++){const a=arch(i);rect(c,p.cream,i,h-22-a,1,4);rect(c,'#a5babc',i,h-a,1,5);rect(c,'#e8e8d5',i,h-1-a,1,2);}
    for(const i of [0,w-7]){rect(c,p.stoneDark,i,h-23,7,30);rect(c,p.cream,i-1,h-26,9,5);}
+   if(p.weather==='snow')for(let i=0;i<w;i+=3){const a=arch(i);rect(c,'#fff8e5',i,-13-a,3,3);rect(c,'#fff8e5',i,h-23-a,3,3);}
   }
  }else if(kind==='palm'){
   oval(c,'#276f65',-12,h-5,w+33,13);
