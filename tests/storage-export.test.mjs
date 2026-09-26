@@ -7,6 +7,7 @@ import {gardenPacks} from '../src/garden.js';
 import {project,makeScene,initializeScene,entity,createRule,clone} from '../src/model.js';
 import {ProjectStore,STORAGE_KEY,LEGACY_KEY} from '../src/storage.js';
 import {buildGameHTML,buildProjectPackage} from '../src/export.js';
+import {Runtime} from '../src/runtime.js';
 
 class MemoryStorage {
   data=new Map();fail=null;
