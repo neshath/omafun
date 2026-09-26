@@ -15,6 +15,7 @@ export function field(parent,label,value,change,options={}){
 }
 export function dialog(title){const d=node('dialog','workbench-dialog'),close=button('×',()=>d.close(),'dialog-close');close.setAttribute('aria-label','Close');d.append(close,node('h2','',title));document.body.append(d);d.addEventListener('close',()=>d.remove());return d;}
 
+export function clearSceneReferences(project,sceneId){for(const scene of project.scenes){for(const e of scene.entities)if(e.targetScene===sceneId)e.targetScene='';for(const rule of scene.events||[])if(rule.action==='scene'&&rule.targetId===sceneId)rule.targetId='';}}
 export function createPanels(api){
  let editingAssetId=null,lastProject=api.project.id;
  const originalPalettes=clone(palettes),tileTransform={flipX:false,flipY:false,rotation:0};
@@ -97,7 +98,7 @@ export function createPanels(api){
   for(const[id,label]of [['files','▱ Files'],['hud','♥ HUD'],['collisions','▧ Solids']]){const b=button(label,()=>api.setTab(id));b.dataset.tab=id;document.querySelector('.asset-tabs').insertBefore(b,document.querySelector('#collapse'));}
   const biome=document.querySelector('#biome');biome.replaceChildren();for(const[k,v]of Object.entries(biomeNames)){const opt=node('option','',v);opt.value=k;biome.append(opt);}
   const welcome=document.querySelector('.welcome-actions');welcome.append(button('◇ Create a top-down adventure',()=>api.loadProject(templateProject('topdown'))),button('▣ Create a 2.5D water world',()=>api.loadProject(templateProject('2.5d'))),button('✦ Create an arcade stage',()=>api.loadProject(templateProject('arcade'))),button('▱ All saved projects',showProjects));
-  const deleteScene=button('− Delete scene',()=>{if(api.project.scenes.length<=1){api.note('A project needs at least one scene.');return;}if(!confirm(`Delete “${api.scene.name}”? Undo restores the scene.`))return;mutate(()=>{const id=api.scene.id;api.project.scenes.splice(api.project.activeScene,1);api.project.activeScene=Math.max(0,api.project.activeScene-1);for(const s of api.project.scenes){for(const e of s.entities)if(e.targetScene===id)e.targetScene='';for(const rule of s.events||[])if(rule.action==='scene'&&rule.targetId===id)rule.targetId='';}api.selected=null;});},'quiet');document.querySelector('.project-tree').append(deleteScene);
+  const deleteScene=button('− Delete scene',()=>{if(api.project.scenes.length<=1){api.note('A project needs at least one scene.');return;}if(!confirm(`Delete “${api.scene.name}”? Undo restores the scene.`))return;mutate(()=>{const id=api.scene.id;api.project.scenes.splice(api.project.activeScene,1);api.project.activeScene=Math.max(0,api.project.activeScene-1);clearSceneReferences(api.project,id);api.selected=null;});},'quiet');document.querySelector('.project-tree').append(deleteScene);
  }
  init();
  return {tileTransform,showSettings,showProjects,renderInspector,
