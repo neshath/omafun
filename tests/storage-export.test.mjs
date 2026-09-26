@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 import {templateProject} from '../src/templates.js';
 import {gardenPacks} from '../src/garden.js';
-import {project} from '../src/model.js';
+import {project,makeScene,initializeScene,entity,createRule,clone} from '../src/model.js';
 import {ProjectStore,STORAGE_KEY,LEGACY_KEY} from '../src/storage.js';
 import {buildGameHTML,buildProjectPackage} from '../src/export.js';
 
