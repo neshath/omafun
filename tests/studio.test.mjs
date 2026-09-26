@@ -16,6 +16,21 @@ test('scenes persist automatic music selection',()=>{
   assert.equal(loaded.scenes[0].musicId,'music-1');
 });
 test('runtime resolves imported audio by id or name',()=>{const p=project();p.audio.effects.push({id:'fx-1',name:'Jump',mime:'audio/wav',bytes:4,data:'data:audio/wav;base64,AAAA',loop:false});p.audio.music.push({id:'music-1',name:'Theme',mime:'audio/mpeg',bytes:4,data:'data:audio/mpeg;base64,AAAA',loop:true});const r=new Runtime({...p.scenes[0],entities:[entity('player',32,32)]},p);assert.equal(r.findAudio('fx-1').name,'Jump');assert.equal(r.findAudio('Jump').id,'fx-1');assert.equal(r.findAudio('Theme').loop,true);assert.equal(r.findAudio('missing'),null);});
+test('runtime tracks active audio, mutes it, disposes it, and cleans failed playback',async()=>{
+ const OriginalAudio=globalThis.Audio,OriginalContext=globalThis.AudioContext,instances=[];
+ class FakeAudio{constructor(src){this.src=src;this.muted=false;this.loop=false;this.currentTime=0;this.volume=1;this.paused=false;instances.push(this)}async play(){if(FakeAudio.reject)throw Error('play rejected');this.paused=false}pause(){this.paused=true}}
+ FakeAudio.reject=false;globalThis.Audio=FakeAudio;globalThis.AudioContext=undefined;
+ try{
+  const p=project();p.audio.music.push({id:'music-1',name:'Theme',mime:'audio/mpeg',bytes:4,data:'data:audio/mpeg;base64,AAAA',loop:true});
+  p.audio.effects.push({id:'fx-1',name:'Click',mime:'audio/wav',bytes:4,data:'data:audio/wav;base64,AAAA',loop:false});
+  const r=new Runtime({...p.scenes[0],entities:[entity('player',32,32)]},p);r.audioReady=true;
+  assert.equal(await r.playAudio('music-1'),true);assert.equal(r.activeAudio.size,1);const music=instances[0];
+  r.setMuted(true);assert.equal(music.muted,true);r.setMuted(false);assert.equal(music.muted,false);
+  assert.equal(await r.playAudio('fx-1'),true);assert.equal(r.activeAudio.size,2);
+  r.stopAllAudio();assert.equal(r.activeAudio.size,0);assert.equal(music.paused,true);assert.equal(music.src,'');assert.equal(r.currentMusic,null);
+  FakeAudio.reject=true;assert.equal(await r.playAudio('fx-1'),false);assert.equal(r.activeAudio.size,0);
+ }finally{globalThis.Audio=OriginalAudio;globalThis.AudioContext=OriginalContext}
+});
 test('audio assets round-trip as effects and music and reject invalid data',()=>{const p=project();p.audio.effects.push({id:'fx-1',name:'Jump',mime:'audio/wav',bytes:4,data:'data:audio/wav;base64,AAAA',loop:false});p.audio.music.push({id:'music-1',name:'Theme',mime:'audio/mpeg',bytes:4,data:'data:audio/mpeg;base64,AAAA',loop:true});const loaded=validateExtended(JSON.parse(JSON.stringify(p)));assert.equal(loaded.audio.effects[0].name,'Jump');assert.equal(loaded.audio.music[0].loop,true);const invalid=JSON.parse(JSON.stringify(p));invalid.audio.effects[0].data='not-a-data-url';assert.throws(()=>validateExtended(invalid),/audio library/);const tooLarge=JSON.parse(JSON.stringify(p));tooLarge.audio.effects[0].bytes=4*1024*1024+1;assert.throws(()=>validateExtended(tooLarge),/audio library/);const tooMuch=project();for(let i=0;i<2;i++)tooMuch.audio.effects.push({id:`fx-${i}`,name:`FX ${i}`,mime:'audio/wav',bytes:4*1024*1024,data:'data:audio/wav;base64,AAAA',loop:false});tooMuch.audio.effects.push({id:'fx-extra',name:'Extra',mime:'audio/wav',bytes:1,data:'data:audio/wav;base64,AA==',loop:false});assert.throws(()=>validateExtended(tooMuch),/too large/);});
 function flat(){const s=project().scenes[0];for(let x=0;x<64;x++)s.layers[1].tiles[`${x},10`]=1;s.entities=[entity('player',32,130)];return s;}
 test('runtime lands, accelerates, jumps and preserves the editing scene',()=>{const s=flat(),before=JSON.stringify(s),r=new Runtime(s);for(let i=0;i<90;i++)r.update(1/60,new Set());assert.equal(r.player.y,144);assert.ok(r.grounded);for(let i=0;i<20;i++)r.update(1/60,new Set(['ArrowRight']));assert.ok(r.player.x>50);const y=r.player.y;r.update(1/60,new Set([' ']));assert.ok(r.player.y<y);assert.equal(JSON.stringify(s),before);});
