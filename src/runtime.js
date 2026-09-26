@@ -30,6 +30,7 @@ export class Runtime {
     this.invincible=0;this.attack=0;this.attackCooldown=0;this.facing=1;this.aim={x:1,y:0};
     this.contacts=new Set();this.attackHits=new Set();this.sceneTime=0;this.pending=[];this.fired=new Set();this.timerNext=new Map();
     this.cameraTarget=null;this.shake=0;this.dialogue=null;this.message=null;this.boss=null;this.entryPending=true;this.won=false;
+    if(this.audioReady)this.playSceneMusic();
     this.hazards=scene.layers.flatMap(l=>Object.entries(l.tiles||{}).filter(([,id])=>id===5||id===16).map(([key])=>{
       const [x,y]=key.split(',').map(Number);return{x:x*16,y:y*16+5,w:16,h:11};
     }));
@@ -47,6 +48,7 @@ export class Runtime {
       if(!this.audio)this.audio=new Ctx();
       if(this.audio.state==='suspended')await this.audio.resume();
       this.audioReady=this.audio.state==='running';
+      if(this.audioReady)this.playSceneMusic();
     }catch{this.audioReady=false;}
   }
   async playAudio(value){
@@ -69,6 +71,16 @@ export class Runtime {
   }
   stopMusic(){if(this.currentMusic){this.currentMusic.pause();this.currentMusic.currentTime=0;this.currentMusic=null;}}
   async resumeAudio(){if(this.audio?.state==='suspended'){try{await this.audio.resume()}catch{}}}
+  sceneMusicAsset(){
+    const id=String(this.scene?.musicId||'').trim();
+    return id?((this.project?.audio?.music||[]).find(a=>a.id===id)||null):null;
+  }
+  playSceneMusic(){
+    const asset=this.sceneMusicAsset();
+    if(asset)return this.playAudio(asset.id);
+    this.stopMusic();
+    return false;
+  }
   notify(type,detail={}) {
     const event={type,...detail};this.notifications.push(event);if(this.notifications.length>100)this.notifications.shift();
     if(typeof this.emit==='function')this.emit(event);
