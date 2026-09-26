@@ -58,7 +58,7 @@ export class Runtime {
     }
     return true;
   }
-  setMuted(value){this.muted=Boolean(value);for(const player of this.activeAudio)player.muted=this.muted;}
+  setMuted(value){this.muted=Boolean(value);if(this.currentMusic)this.currentMusic.muted=this.muted;for(const player of this.activeAudio)player.muted=this.muted;}
   async playAudio(value){
     const asset=this.findAudio(value);
     if(!asset||this.project?.settings?.sound===false)return false;
@@ -68,6 +68,8 @@ export class Runtime {
       player.preload='auto';
       player.volume=Math.max(0,Math.min(1,runtimeNumber(this.project?.settings?.volume,.25)));player.muted=this.muted;
       player.loop=Boolean(asset.loop);
+      this.activeAudio.add(player);
+      player.onended=()=>{this.activeAudio.delete(player);if(this.currentMusic===player)this.currentMusic=null;player.src='';};
       if(asset.loop){
         if(this.currentMusic&&this.currentMusic!==player){this.currentMusic.pause();this.currentMusic.currentTime=0;this.activeAudio.delete(this.currentMusic);this.currentMusic.src='';}
         this.currentMusic=player;
