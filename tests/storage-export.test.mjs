@@ -77,7 +77,7 @@ test('invalid input and corrupt persisted JSON never reset existing data',()=>{
 function comprehensiveProject(){
   const p=project();p.name='End-to-end export fixture';p.settings={sound:true,volume:.5};
   const s1=p.scenes[0],s2=initializeScene(makeScene('Second scene'));
-  for(const s of [s1,s2]){s.width=20;s.height=12;s.camera={x:0,y:0,w:320,h:192};for(let x=0;x<s.width;x++){s.layers[1].tiles[`${x},10`]=1;s.layers[1].tiles[`${x},11`]=2;}}
+  for(const s of [s1,s2]){s.width=20;s.height=12;s.camera={x:0,y:0,w:320,h:192};for(let x=0;x<s.width;x++){s.layers[1].tiles[x+',10']=1;s.layers[1].tiles[x+',11']=2;}}
   s1.entities=[];s2.entities=[];
   const player1=entity('player',16,144),switcher=entity('switch',64,144),door=entity('door',112,144),gem=entity('gem',88,144),checkpoint=entity('checkpoint',48,144),enemy=entity('enemy',176,144);
   door.locked=true;player1.spriteId='sprite-1';s1.entities.push(player1,switcher,door,gem,checkpoint,enemy);
@@ -89,32 +89,16 @@ function comprehensiveProject(){
   p.audio={effects:[fx],music:[music1,music2]};s1.musicId=music1.id;s2.musicId=music2.id;
   const rule=createRule();Object.assign(rule,{name:'Switch opens exit',event:'switch',sourceId:switcher.id,action:'open',targetId:door.id});
   s1.events=[rule];s1.hud={health:true,score:true,timer:true,lives:true,keys:true,boss:false,objective:'Reach the second scene.'};
-  const player2=entity('player',16,144);const gem2=entity('gem',80,144);s2.entities.push(player2,gem2);p.scenes.push(s2);p.activeScene=0;return p;
+  const player2=entity('player',16,144),gem2=entity('gem',80,144);s2.entities.push(player2,gem2);p.scenes.push(s2);p.activeScene=0;return p;
 }
-  s1.entities=[];s2.entities=[];
-  const player1=entity('player',16,144),switcher=entity('switch',64,144),door=entity('door',112,144),gem=entity('gem',88,144),checkpoint=entity('checkpoint',48,144),enemy=entity('enemy',176,144);
-  door.locked=true;player1.spriteId='sprite-1';s1.entities.push(player1,switcher,door,gem,checkpoint,enemy);
-  const sprite={id:'sprite-1',name:'Hero Asset',size:8,frames:[Array(64).fill('#abcdef')],timing:120,mode:'loop',folder:'Sprites',tags:[]};
-  p.assets=[sprite];p.sprite=clone(sprite);
-  const fx={id:'fx-1',name:'Click',mime:'audio/wav',bytes:4,data:'data:audio/wav;base64,AAAA',loop:false};
-  const music1={id:'music-1',name:'Forest Theme',mime:'audio/mpeg',bytes:4,data:'data:audio/mpeg;base64,AAAA',loop:true};
-  const music2={id:'music-2',name:'Cave Theme',mime:'audio/ogg',bytes:4,data:'data:audio/ogg;base64,AAAA',loop:true};
-  p.audio={effects:[fx],music:[music1,music2]};s1.musicId=music1.id;s2.musicId=music2.id;
-  const rule=createRule();Object.assign(rule,{name:'Switch opens exit',event:'switch',sourceId:switcher.id,action:'open',targetId:door.id});
-  s1.events=[rule];s1.hud={health:true,score:true,timer:true,lives:true,keys:true,boss:false,objective:'Reach the second scene.'};
-  const player2=entity('player',16,144);const gem2=entity('gem',80,144);s2.entities.push(player2,gem2);p.scenes.push(s2);p.activeScene=0;return p;
-}
-test('comprehensive export fixture survives runtime, transition, checkpoint, assets and HTML bundling',async()=>{
+test('comprehensive export fixture survives runtime, transition, assets and HTML bundling',async()=>{
   const p=comprehensiveProject(),[s1,s2]=p.scenes;
-  const r=new Runtime(s1,p);
-  r.player.x=48;r.setCheckpoint(r.scene.entities.find(e=>e.type==='checkpoint'));
-  const gem=r.scene.entities.find(e=>e.type==='gem'),enemy=r.scene.entities.find(e=>e.type==='enemy');
-  gem.dead=true;enemy.dead=true;r.score=250;r.respawn();
+  const r=new Runtime(s1,p);r.player.x=48;r.setCheckpoint(r.scene.entities.find(e=>e.type==='checkpoint'));
+  const gem=r.scene.entities.find(e=>e.type==='gem'),enemy=r.scene.entities.find(e=>e.type==='enemy');gem.dead=true;enemy.dead=true;r.score=250;r.respawn();
   assert.equal(r.score,0);assert.equal(r.scene.entities.find(e=>e.id===gem.id).dead,undefined);assert.equal(r.scene.entities.find(e=>e.id===enemy.id).dead,undefined);
-  r.dispatch('switch',r.scene.entities.find(e=>e.type==='switch').id);assert.equal(r.scene.entities.find(e=>e.type==='door').locked,false);
-  r.player.x=112;r.update(1/60,new Set());assert.equal(r.scene.id,s2.id);assert.equal(r.scene.musicId,'music-2');
-  const html=await buildGameHTML(p,undefined,fsLoader);
-  assert.ok(html.includes('sprite-1'));assert.ok(html.includes('music-1'));assert.ok(html.includes('music-2'));assert.ok(html.includes('Second scene'));assert.ok(html.includes('🔊 Mute'));
+  r.dispatch('switch',r.scene.entities.find(e=>e.type==='switch').id);assert.equal(r.scene.entities.find(e=>e.type==='door').locked,false);r.player.x=112;r.update(1/60,new Set());
+  assert.equal(r.scene.id,s2.id);assert.equal(r.scene.musicId,'music-2');
+  const html=await buildGameHTML(p,undefined,fsLoader);assert.ok(html.includes('sprite-1'));assert.ok(html.includes('music-1'));assert.ok(html.includes('music-2'));assert.ok(html.includes('Second scene'));assert.ok(html.includes('🔊 Mute'));
   const source=html.match(/<script>([\s\S]*)<\/script>/)[1];new vm.Script(source);
 });
 const fsLoader=url=>readFile(new URL(url),'utf8');
