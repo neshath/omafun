@@ -51,14 +51,16 @@ const project=${safeJSON(project)}, scene=project.scenes.find(s=>s.id===${safeJS
 const {Runtime}=__modules['runtime.js'];
 const canvas=document.getElementById('game'), context=canvas.getContext('2d');
 canvas.width=scene.camera.w||384;canvas.height=scene.camera.h||216;context.imageSmoothingEnabled=false;
-let runtime,started=false,last=0,padPause=false,padRestart=false;
+let runtime,started=false,last=0,padPause=false,padRestart=false,muted=false;
 const keys=new Set(),overlay=document.getElementById('start'),status=document.getElementById('status');
-function restart(){runtime=new Runtime(scene,project);}
+function restart(){runtime=new Runtime(scene,project);if(muted)runtime.setMuted?.(true);}
 function pause(){if(runtime)runtime.paused=!runtime.paused;}
+function setMuted(value){muted=value;const button=document.getElementById('mute');button.textContent=muted?'🔇 Unmute':'🔊 Mute';button.setAttribute('aria-pressed',String(muted));if(runtime)runtime.setMuted?.(muted);}
 async function start(){try{restart();if(runtime.unlockAudio)await runtime.unlockAudio();if(runtime.audio?.resume)await runtime.audio.resume();started=true;overlay.hidden=true;canvas.focus();}catch(error){status.textContent=error.message;}}
 document.getElementById('begin').onclick=start;
 document.getElementById('pause').onclick=pause;
 document.getElementById('restart').onclick=()=>{if(started)restart();};
+document.getElementById('mute').onclick=()=>setMuted(!muted);
 const normalize=key=>key.length===1?key.toLowerCase():key;
 addEventListener('keydown',event=>{const key=normalize(event.key);if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Escape'].includes(key))event.preventDefault();keys.add(key);if(!event.repeat){if(key==='Escape'||key==='p')pause();if(key==='r'&&started)restart();}});
 addEventListener('keyup',event=>keys.delete(normalize(event.key)));
@@ -67,5 +69,5 @@ function frame(now){const dt=Math.min((now-last)/1000||0,1/30);last=now;if(start
 `;
   // Escape literal HTML end tags in trusted app sources as well as project data.
   const script=('(()=>{\nconst __modules=Object.create(null);\n'+[...modules.values()].join('\n')+boot+'\n})();').replace(/<\/script/gi,'<\\/script');
-  return `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${htmlText(project.name)}</title><style>body{margin:0;background:#101720;color:#e4edce;font:16px system-ui;display:grid;place-content:center;min-height:100vh;text-align:center}canvas{display:block;width:min(96vw,1100px);max-height:80vh;object-fit:contain;image-rendering:pixelated}button{padding:12px 24px;margin:8px;cursor:pointer}#start{position:fixed;inset:0;background:#101720ed;display:grid;place-content:center}#start[hidden]{display:none}</style><canvas id="game" tabindex="0" aria-label="Game"></canvas><nav><button id="pause">Pause / Resume</button><button id="restart">Restart</button></nav><p>Move: arrows / WASD · Jump: Space · Attack: X · Pause: Esc · Restart: R · Gamepad supported</p><div id="start"><h1>${htmlText(project.name)}</h1><button id="begin">Start game</button><p id="status" role="status"></p></div><script>${script}</script></html>`;
+  return `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${htmlText(project.name)}</title><style>body{margin:0;background:#101720;color:#e4edce;font:16px system-ui;display:grid;place-content:center;min-height:100vh;text-align:center}canvas{display:block;width:min(96vw,1100px);max-height:80vh;object-fit:contain;image-rendering:pixelated}button{padding:12px 24px;margin:8px;cursor:pointer}#start{position:fixed;inset:0;background:#101720ed;display:grid;place-content:center}#start[hidden]{display:none}</style><canvas id="game" tabindex="0" aria-label="Game"></canvas><nav><button id="pause">Pause / Resume</button><button id="restart">Restart</button><button id="mute" aria-pressed="false">🔊 Mute</button></nav><p>Move: arrows / WASD · Jump: Space · Attack: X · Pause: Esc · Restart: R · Gamepad supported</p><div id="start"><h1>${htmlText(project.name)}</h1><button id="begin">Start game</button><p id="status" role="status"></p></div><script>${script}</script></html>`;
 }
