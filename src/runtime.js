@@ -12,7 +12,7 @@ export class Runtime {
     this.project=projectData?clone(projectData):undefined;
     this.score=0;this.elapsed=0;this.deaths=0;this.lives=3;this.keys=new Set();this.inventory={};
     this.paused=false;this.won=false;this.accumulator=0;this.sequence=0;this.eventDepth=0;
-    this.notifications=[];this.emit=null;this.sceneStates=new Map();this.loadScene(clone(scene),false);
+    this.notifications=[];this.emit=null;this.audio=null;this.audioReady=false;this.currentMusic=null;this.sceneStates=new Map();this.loadScene(clone(scene),false);
   }
   prepareEntity(e) {
     e.w=runtimeNumber(e.w,12);e.h=runtimeNumber(e.h,16);e.speed=runtimeNumber(e.speed,e.type==='player'?145:35);
@@ -34,6 +34,41 @@ export class Runtime {
       const [x,y]=key.split(',').map(Number);return{x:x*16,y:y*16+5,w:16,h:11};
     }));
   }
+  audioAssets(){return [...(this.project?.audio?.effects||[]),...(this.project?.audio?.music||[])];}
+  findAudio(value){
+    if(!value)return null;
+    const id=String(value).trim().toLowerCase();
+    return this.audioAssets().find(a=>String(a.id).toLowerCase()===id||String(a.name).toLowerCase()===id)||null;
+  }
+  async unlockAudio(){
+    if(!globalThis.AudioContext&&!globalThis.webkitAudioContext){this.audioReady=true;return;}
+    const Ctx=globalThis.AudioContext||globalThis.webkitAudioContext;
+    try{
+      if(!this.audio)this.audio=new Ctx();
+      if(this.audio.state==='suspended')await this.audio.resume();
+      this.audioReady=this.audio.state==='running';
+    }catch{this.audioReady=false;}
+  }
+  async playAudio(value){
+    const asset=this.findAudio(value);
+    if(!asset||this.project?.settings?.sound===false)return false;
+    try{
+      if(!this.audioReady)await this.unlockAudio();
+      const player=new Audio(asset.data);
+      player.preload='auto';
+      player.volume=Math.max(0,Math.min(1,runtimeNumber(this.project?.settings?.volume,.25)));
+      player.loop=Boolean(asset.loop);
+      if(asset.loop){
+        if(this.currentMusic&&this.currentMusic!==player){this.currentMusic.pause();this.currentMusic.currentTime=0;}
+        this.currentMusic=player;
+      }
+      await player.play();
+      if(!asset.loop)player.addEventListener('ended',()=>{player.src='';},{once:true});
+      return true;
+    }catch{this.notify('audio-error',{sound:value});return false;}
+  }
+  stopMusic(){if(this.currentMusic){this.currentMusic.pause();this.currentMusic.currentTime=0;this.currentMusic=null;}}
+  async resumeAudio(){if(this.audio?.state==='suspended'){try{await this.audio.resume()}catch{}}}
   notify(type,detail={}) {
     const event={type,...detail};this.notifications.push(event);if(this.notifications.length>100)this.notifications.shift();
     if(typeof this.emit==='function')this.emit(event);
@@ -68,7 +103,7 @@ export class Runtime {
       case 'dialogue':this.dialogue={text:String(value||target?.text||''),sourceId:target?.id||rule.targetId};this.notify('dialogue',this.dialogue);break;
       case 'message':this.message={text:String(value??''),until:this.sceneTime+4};this.notify('message',this.message);break;
       case 'camera':this.cameraTarget=target?.id||(value&&typeof value==='object'?value:null);break;
-      case 'sound':this.notify('sound',{sound:value,sourceId:rule.targetId});break;
+      case 'sound':this.notify('sound',{sound:value,sourceId:rule.targetId});this.playAudio(value);break;
       case 'shake':this.shake=Math.max(0,runtimeNumber(value,.4));break;
       case 'palette':if(Object.hasOwn(palettes,value))this.scene.biome=value;break;
       case 'animation':if(target){target.animation=value;target.animationTime=this.elapsed;if(value==='hide')target.visible=false;if(value==='show')target.visible=true;if(value==='flip')target.flipX=!target.flipX;}break;
