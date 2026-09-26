@@ -43,11 +43,11 @@ function flat(){const s=project().scenes[0];for(let x=0;x<64;x++)s.layers[1].til
 test('runtime lands, accelerates, jumps and preserves the editing scene',()=>{const s=flat(),before=JSON.stringify(s),r=new Runtime(s);for(let i=0;i<90;i++)r.update(1/60,new Set());assert.equal(r.player.y,144);assert.ok(r.grounded);for(let i=0;i<20;i++)r.update(1/60,new Set(['ArrowRight']));assert.ok(r.player.x>50);const y=r.player.y;r.update(1/60,new Set([' ']));assert.ok(r.player.y<y);assert.equal(JSON.stringify(s),before);});
 test('checkpoint captures once and restores later world changes on respawn',()=>{
  const s=flat(),gem=entity('gem',80,144),checkpoint=entity('checkpoint',32,144),enemy=entity('enemy',112,144);
- s.entities.push(gem,checkpoint,enemy);const r=new Runtime(s);for(let i=0;i<20;i++)r.update(1/60,new Set());
- const gemBefore=JSON.stringify(r.checkpointState);
- gem.dead=true;enemy.dead=true;r.score=200;r.setCheckpoint(checkpoint);assert.notEqual(JSON.stringify(r.checkpointState),gemBefore);
- const snapshotAfterActivation=JSON.stringify(r.checkpointState);gem.dead=true;enemy.dead=true;r.score=250;r.respawn();
- assert.equal(JSON.stringify(r.checkpointState),snapshotAfterActivation);assert.equal(r.scene.entities.find(e=>e.id===gem.id).dead,undefined);assert.equal(r.scene.entities.find(e=>e.id===enemy.id).dead,undefined);
+ s.entities.push(gem,checkpoint,enemy);const r=new Runtime(s);r.setCheckpoint(checkpoint);
+ const snapshotAfterActivation=JSON.stringify(r.checkpointState);
+ gem.dead=true;enemy.dead=true;r.score=250;r.setCheckpoint(checkpoint);
+ assert.equal(JSON.stringify(r.checkpointState),snapshotAfterActivation);
+ r.respawn();assert.equal(r.scene.entities.find(e=>e.id===gem.id).dead,undefined);assert.equal(r.scene.entities.find(e=>e.id===enemy.id).dead,undefined);assert.equal(r.score,0);
 });
 test('collectibles score, checkpoints update respawn, doors complete the stage',()=>{const s=flat();s.entities.push(entity('gem',32,144),entity('checkpoint',32,144));const r=new Runtime(s);for(let i=0;i<30;i++)r.update(1/60,new Set());assert.equal(r.score,25);assert.equal(r.spawn.y,144);r.scene.entities.push(entity('door',32,128));r.update(1/60,new Set());assert.ok(r.won);});
 test('one-way platforms allow upward travel and stop downward travel',()=>{const s=flat();s.layers[1].tiles['2,7']=4;const r=new Runtime(s);r.player.y=130;r.vy=-300;for(let i=0;i<8;i++)r.update(1/60,new Set([' ']));assert.ok(r.player.y<112);for(let i=0;i<60;i++)r.update(1/60,new Set());assert.equal(r.player.y,96);});
