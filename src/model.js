@@ -36,7 +36,7 @@ entityTypes.push('key','switch','npc','trigger','transition','savepoint','hazard
 export const eventTypes={enter:'Player enters area',leave:'Player leaves area',collect:'Item collected',attack:'Object attacked',defeat:'Enemy defeated',timer:'Timer completes',switch:'Switch activated',door:'Door opened',boss:'Boss defeated',dialogue:'Dialogue finished',death:'Health reaches zero',checkpoint:'Checkpoint activated',complete:'Scene completed'};
 export const actionTypes={open:'Open door',close:'Close door',spawn:'Spawn enemy',destroy:'Destroy object',dialogue:'Start dialogue',camera:'Change camera region',sound:'Play sound or music',shake:'Shake camera',palette:'Change palette',animation:'Trigger animation',item:'Give item',scene:'Change scene',checkpoint:'Set checkpoint',message:'Display message',boss:'Start boss phase'};
 export function initializeScene(s){
- s.gameType??='platformer';s.events??=[];s.tileTransforms??={};s.autotile??=true;
+ s.gameType??='platformer';s.events??=[];s.tileTransforms??={};s.autotile??=true;s.musicId??='';
  s.hud={health:true,score:true,timer:true,lives:true,keys:true,boss:true,objective:'',...s.hud};
  s.entities.forEach(e=>{e.spriteId??='';e.flipX??=false;e.flipY??=false;e.scale??=1;e.rotation??=0;e.targetScene??='';e.locked??=false;e.keyId??='';e.text??='';e.period??=2;e.direction??=1;e.path??=[];e.tags??=[];});return s;
 }
