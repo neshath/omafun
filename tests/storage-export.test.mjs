@@ -135,7 +135,7 @@ test('runtime audio covers formats, effects, music switching, volume and respawn
     assert.equal(played[0].loop,true);
     assert.equal(played[0].volume,.6);
 
-    await runtime.playAudio('jump');
+    await runtime.playAudio('wav');
     assert.equal(played.length,2);
     assert.equal(played[1].src,files[1].data);
     assert.equal(played[1].loop,false);
