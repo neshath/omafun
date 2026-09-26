@@ -62,9 +62,10 @@ export class Runtime {
   async playAudio(value){
     const asset=this.findAudio(value);
     if(!asset||this.project?.settings?.sound===false)return false;
+    let player=null;
     try{
       if(!this.audioReady)await this.unlockAudio();
-      const player=new Audio(asset.data);
+      player=new Audio(asset.data);
       player.preload='auto';
       player.volume=Math.max(0,Math.min(1,runtimeNumber(this.project?.settings?.volume,.25)));player.muted=this.muted;
       player.loop=Boolean(asset.loop);
@@ -76,7 +77,11 @@ export class Runtime {
       }
       await player.play();
       return true;
-    }catch{this.notify('audio-error',{sound:value});return false;}
+    }catch{
+      if(player){this.activeAudio.delete(player);if(this.currentMusic===player)this.currentMusic=null;try{player.pause();player.src='';}catch{}}
+      this.notify('audio-error',{sound:value});
+      return false;
+    }
   }
   stopMusic(){if(this.currentMusic){this.currentMusic.pause();this.currentMusic.currentTime=0;this.activeAudio.delete(this.currentMusic);this.currentMusic.src='';this.currentMusic=null;}}
   stopAllAudio(){for(const player of this.activeAudio){try{player.pause();player.currentTime=0;player.src='';}catch{}}this.activeAudio.clear();this.currentMusic=null;}
