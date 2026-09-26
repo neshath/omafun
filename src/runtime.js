@@ -12,7 +12,7 @@ export class Runtime {
     this.project=projectData?clone(projectData):undefined;
     this.score=0;this.elapsed=0;this.deaths=0;this.lives=3;this.keys=new Set();this.inventory={};
     this.paused=false;this.won=false;this.accumulator=0;this.sequence=0;this.eventDepth=0;
-    this.notifications=[];this.emit=null;this.audio=null;this.audioReady=false;this.currentMusic=null;this.muted=false;this.sceneStates=new Map();this.loadScene(clone(scene),false);
+    this.notifications=[];this.emit=null;this.audio=null;this.audioReady=false;this.currentMusic=null;this.activeAudio=new Set();this.muted=false;this.sceneStates=new Map();this.loadScene(clone(scene),false);
   }
   prepareEntity(e) {
     e.w=runtimeNumber(e.w,12);e.h=runtimeNumber(e.h,16);e.speed=runtimeNumber(e.speed,e.type==='player'?145:35);
@@ -58,7 +58,7 @@ export class Runtime {
     }
     return true;
   }
-  setMuted(value){this.muted=Boolean(value);if(this.currentMusic)this.currentMusic.muted=this.muted;}
+  setMuted(value){this.muted=Boolean(value);for(const player of this.activeAudio)player.muted=this.muted;}
   async playAudio(value){
     const asset=this.findAudio(value);
     if(!asset||this.project?.settings?.sound===false)return false;
@@ -69,15 +69,14 @@ export class Runtime {
       player.volume=Math.max(0,Math.min(1,runtimeNumber(this.project?.settings?.volume,.25)));player.muted=this.muted;
       player.loop=Boolean(asset.loop);
       if(asset.loop){
-        if(this.currentMusic&&this.currentMusic!==player){this.currentMusic.pause();this.currentMusic.currentTime=0;}
+        if(this.currentMusic&&this.currentMusic!==player){this.currentMusic.pause();this.currentMusic.currentTime=0;this.activeAudio.delete(this.currentMusic);this.currentMusic.src='';}
         this.currentMusic=player;
       }
       await player.play();
-      if(!asset.loop)player.addEventListener('ended',()=>{player.src='';},{once:true});
       return true;
     }catch{this.notify('audio-error',{sound:value});return false;}
   }
-  stopMusic(){if(this.currentMusic){this.currentMusic.pause();this.currentMusic.currentTime=0;this.currentMusic=null;}}
+  stopMusic(){if(this.currentMusic){this.currentMusic.pause();this.currentMusic.currentTime=0;this.activeAudio.delete(this.currentMusic);this.currentMusic.src='';this.currentMusic=null;}}
   async resumeAudio(){if(this.audio?.state==='suspended'){try{await this.audio.resume()}catch{}}}
   sceneMusicAsset(){
     const id=String(this.scene?.musicId||'').trim();
