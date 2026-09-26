@@ -53,9 +53,9 @@ const canvas=document.getElementById('game'), context=canvas.getContext('2d');
 canvas.width=scene.camera.w||384;canvas.height=scene.camera.h||216;context.imageSmoothingEnabled=false;
 let runtime,started=false,last=0,padPause=false,padRestart=false,muted=false;
 const keys=new Set(),overlay=document.getElementById('start'),status=document.getElementById('status');
-function restart(){runtime=new Runtime(scene,project);}
+function restart(){runtime=new Runtime(scene,project);if(muted)runtime.setMuted?.(true);}
 function pause(){if(runtime)runtime.paused=!runtime.paused;}
-function setMuted(value){muted=value;document.getElementById('mute').textContent=muted?'🔇 Unmute':'🔊 Mute';if(runtime)runtime.setMuted?.(muted);}
+function setMuted(value){muted=value;const button=document.getElementById('mute');button.textContent=muted?'🔇 Unmute':'🔊 Mute';button.setAttribute('aria-pressed',String(muted));if(runtime)runtime.setMuted?.(muted);}
 async function start(){try{restart();if(runtime.unlockAudio)await runtime.unlockAudio();if(runtime.audio?.resume)await runtime.audio.resume();started=true;overlay.hidden=true;canvas.focus();}catch(error){status.textContent=error.message;}}
 document.getElementById('begin').onclick=start;
 document.getElementById('pause').onclick=pause;
