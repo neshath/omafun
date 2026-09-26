@@ -16,6 +16,7 @@ export function field(parent,label,value,change,options={}){
 export function dialog(title){const d=node('dialog','workbench-dialog'),close=button('×',()=>d.close(),'dialog-close');close.setAttribute('aria-label','Close');d.append(close,node('h2','',title));document.body.append(d);d.addEventListener('close',()=>d.remove());return d;}
 
 export function clearSceneReferences(project,sceneId){for(const scene of project.scenes){for(const e of scene.entities)if(e.targetScene===sceneId)e.targetScene='';for(const rule of scene.events||[])if(rule.action==='scene'&&rule.targetId===sceneId)rule.targetId='';}}
+export function removeEntityRules(project,entityId){for(const scene of project.scenes)scene.events=(scene.events||[]).filter(rule=>rule.sourceId!==entityId&&!(rule.targetId===entityId&&rule.action!=='scene'));}
 export function createPanels(api){
  let editingAssetId=null,lastProject=api.project.id;
  const originalPalettes=clone(palettes),tileTransform={flipX:false,flipY:false,rotation:0};
@@ -61,7 +62,7 @@ export function createPanels(api){
    if(e.type==='key'){sec=section(host,'KEY');editField(sec,'Key ID',e,'keyId');}
    if(['npc','trigger','savepoint'].includes(e.type)){sec=section(host,'INTERACTION');editField(sec,'Dialogue text',e,'text',{multiline:true,maxLength:1000});}
    sec=section(host,'OBJECT ID');const id=node('code','entity-id',e.id);sec.append(id,button('Add event for this object',()=>{mutate(()=>{const r=createRule();r.sourceId=e.id;r.event=e.type==='switch'?'switch':'enter';s.events.push(r);});api.setTab('logic');}));
-   sec.append(button('Duplicate',()=>{if(e.type==='player'){api.note('A scene has one player spawn.');return;}mutate(()=>{const copy=clone(e);copy.id=crypto.randomUUID();copy.x=Math.min(s.width*16-copy.w,copy.x+16);s.entities.push(copy);api.selected=copy.id;});}),button('Delete',()=>mutate(()=>{s.entities=s.entities.filter(x=>x.id!==e.id);api.selected=null;})));return true;
+   sec.append(button('Duplicate',()=>{if(e.type==='player'){api.note('A scene has one player spawn.');return;}mutate(()=>{const copy=clone(e);copy.id=crypto.randomUUID();copy.x=Math.min(s.width*16-copy.w,copy.x+16);s.entities.push(copy);api.selected=copy.id;});}),button('Delete',()=>mutate(()=>{removeEntityRules(api.project,e.id);s.entities=s.entities.filter(x=>x.id!==e.id);api.selected=null;})));return true;
   }
   const t=tiles.find(t=>t.id===api.tileId);const title=node('div','inspect-title');title.append(api.thumb('tile',t.id),node('strong','',t.name));host.append(title);
   let sec=section(host,'BRUSH');sec.append(node('p','inspector-note',`${t.category} · ${t.solid?'Solid':'Pass-through'} · 16 × 16 pixels`));field(sec,'Flip X',tileTransform.flipX,v=>tileTransform.flipX=v);field(sec,'Flip Y',tileTransform.flipY,v=>tileTransform.flipY=v);field(sec,'Rotation',tileTransform.rotation,v=>tileTransform.rotation=Number(v),{choices:[0,90,180,270]});editField(sec,'Connect terrain',s,'autotile');
