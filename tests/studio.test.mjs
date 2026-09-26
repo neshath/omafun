@@ -1,8 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {project,validate,validateExtended,History,fill,line,entity,collisionAt} from '../src/model.js';
+import {drawEntity} from '../src/render.js';
 import {Runtime} from '../src/runtime.js';
 test('project round-trip preserves edits and rejects unrelated files',()=>{const p=project(true);p.scenes[0].layers[1].tiles['2,2']=3;assert.deepEqual(validate(JSON.parse(JSON.stringify(p))),p);assert.throws(()=>validate({scenes:[]}));});
+test('custom entities render their assigned library sprite instead of the current drawing',()=>{const p=project();p.sprite.frames=[[...Array(256).fill('#111111')]];const asset={id:'sprite-1',name:'Library',size:1,frames:[['#abcdef']],timing:160,mode:'loop'};const e=entity('custom',0,0);e.spriteId=asset.id;e.w=e.h=1;const fills=[];const c={save(){},restore(){},translate(){},rotate(){},scale(){},fillRect(...args){fills.push({style:this.fillStyle,args});}};drawEntity(c,e,undefined,0,{assets:[asset],customSprite:p.sprite});assert.equal(fills[0].style,'#abcdef');});
 test('custom sprite entities round-trip with their saved sprite asset',()=>{const p=project();const sprite={id:'sprite-1',name:'Hero',size:8,frames:[Array(64).fill('#ffffff')],timing:160,mode:'loop',folder:'Sprites',tags:[]};p.assets.push(sprite);const e=entity('custom',32,32);e.spriteId=sprite.id;e.w=e.h=8;p.scenes[0].entities.push(e);const loaded=validateExtended(JSON.parse(JSON.stringify(p)));assert.equal(loaded.scenes[0].entities[0].type,'custom');assert.equal(loaded.scenes[0].entities[0].spriteId,'sprite-1');assert.equal(loaded.assets[0].frames[0][0],'#ffffff');});
 test('empty project contains no fictional user content',()=>{const p=project();assert.equal(p.scenes[0].entities.length,0);assert.ok(p.scenes[0].layers.every(l=>Object.keys(l.tiles).length===0));assert.throws(()=>new Runtime(p.scenes[0]),/player spawn/)});
 test('undo and redo preserve independent snapshots',()=>{let p=project(),h=new History();h.push(p);p.name='Changed';p=h.undo(p);assert.equal(p.name,'Untitled project');p=h.redo(p);assert.equal(p.name,'Changed');});
