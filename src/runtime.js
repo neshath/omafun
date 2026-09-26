@@ -12,7 +12,7 @@ export class Runtime {
     this.project=projectData?clone(projectData):undefined;
     this.score=0;this.elapsed=0;this.deaths=0;this.lives=3;this.keys=new Set();this.inventory={};
     this.paused=false;this.won=false;this.accumulator=0;this.sequence=0;this.eventDepth=0;
-    this.notifications=[];this.emit=null;this.audio=null;this.audioReady=false;this.currentMusic=null;this.sceneStates=new Map();this.loadScene(clone(scene),false);
+    this.notifications=[];this.emit=null;this.audio=null;this.audioReady=false;this.currentMusic=null;this.muted=false;this.sceneStates=new Map();this.loadScene(clone(scene),false);
   }
   prepareEntity(e) {
     e.w=runtimeNumber(e.w,12);e.h=runtimeNumber(e.h,16);e.speed=runtimeNumber(e.speed,e.type==='player'?145:35);
@@ -58,6 +58,7 @@ export class Runtime {
     }
     return true;
   }
+  setMuted(value){this.muted=Boolean(value);if(this.currentMusic)this.currentMusic.muted=this.muted;}
   async playAudio(value){
     const asset=this.findAudio(value);
     if(!asset||this.project?.settings?.sound===false)return false;
@@ -65,7 +66,7 @@ export class Runtime {
       if(!this.audioReady)await this.unlockAudio();
       const player=new Audio(asset.data);
       player.preload='auto';
-      player.volume=Math.max(0,Math.min(1,runtimeNumber(this.project?.settings?.volume,.25)));
+      player.volume=Math.max(0,Math.min(1,runtimeNumber(this.project?.settings?.volume,.25)));player.muted=this.muted;
       player.loop=Boolean(asset.loop);
       if(asset.loop){
         if(this.currentMusic&&this.currentMusic!==player){this.currentMusic.pause();this.currentMusic.currentTime=0;}
