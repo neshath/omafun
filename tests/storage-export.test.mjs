@@ -4,7 +4,8 @@ import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 import {templateProject} from '../src/templates.js';
 import {gardenPacks} from '../src/garden.js';
-import {project} from '../src/model.js';
+import {project,entity,makeScene} from '../src/model.js';
+import {Runtime} from '../src/runtime.js';
 import {ProjectStore,STORAGE_KEY,LEGACY_KEY} from '../src/storage.js';
 import {buildGameHTML,buildProjectPackage} from '../src/export.js';
 
@@ -81,7 +82,7 @@ for(const format of ['platformer','topdown','2.5d',...Object.keys(gardenPacks)])
   const requested=[];const html=await buildGameHTML(p,undefined,async url=>{requested.push(url);return fsLoader(url);});
   assert.ok(requested.some(url=>url.endsWith('/runtime.js')));assert.equal(new Set(requested).size,requested.length);
   assert.ok(html.includes('&lt;/script&gt;'));assert.equal((html.match(/<script>/g)||[]).length,1);
-  const source=html.match(/<script>([\s\S]*)<\/script>/)[1];new vm.Script(source);
+    const source=html.slice(html.indexOf('<script>')+8,html.lastIndexOf('</script>'));
   const handlers={},elements={};const context=new Proxy({},{get:(_,key)=>key==='canvas'?elements.game:()=>{},set:()=>true});
   for(const id of ['game','start','begin','pause','restart','status'])elements[id]={getContext:()=>context,focus(){}};
   let tick;vm.runInNewContext(source,{document:{getElementById:id=>elements[id]},navigator:{getGamepads:()=>[]},addEventListener:(name,fn)=>handlers[name]=fn,requestAnimationFrame:fn=>{tick=fn;},console});
@@ -101,4 +102,99 @@ test('recursive optional sources, duplicate local declarations and aliased expor
   assert.equal(requests.length,5);new vm.Script(html.match(/<script>([\s\S]*)<\/script>/)[1]);
   await assert.rejects(buildGameHTML(project(), 'missing',fsLoader),/Scene not found/);
   await assert.rejects(buildGameHTML(project(),undefined,()=>"import x from 'https://example.com/x.js';"),/Unsupported source import/);
+});
+
+
+test('runtime audio covers formats, effects, music switching, volume and respawn',async()=>{
+  const originalAudio=globalThis.Audio;
+  const played=[];
+  class FakeAudio{
+    constructor(src){this.src=src;this.loop=false;this.volume=1;this.currentTime=0;this.paused=true;this.listeners={};played.push(this);}
+    async play(){this.paused=false;return true;}
+    pause(){this.paused=true;}
+    addEventListener(name,fn){this.listeners[name]=fn;}
+  }
+  globalThis.Audio=FakeAudio;
+  try{
+    const p=project(),first=p.scenes[0],second=makeScene('Second'),silent=makeScene('Silent');
+    first.entities=[entity('player',32,32)];
+    second.entities=[entity('player',32,32)];
+    silent.entities=[entity('player',32,32)];
+    const files=[
+      {id:'mp3',name:'theme.mp3',mime:'audio/mpeg',bytes:3,data:'data:audio/mpeg;base64,AAA',loop:true},
+      {id:'wav',name:'jump.wav',mime:'audio/wav',bytes:3,data:'data:audio/wav;base64,BBB',loop:false},
+      {id:'ogg',name:'theme.ogg',mime:'audio/ogg',bytes:3,data:'data:audio/ogg;base64,CCC',loop:true}
+    ];
+    p.audio.music=[files[0],files[2]];p.audio.effects=[files[1]];p.settings.volume=.6;
+    first.musicId='mp3';second.musicId='ogg';p.scenes.push(second,silent);
+
+    const runtime=new Runtime(first,p);
+    await runtime.unlockAudio();
+    assert.equal(played.length,1);
+    assert.equal(played[0].src,files[0].data);
+    assert.equal(played[0].loop,true);
+    assert.equal(played[0].volume,.6);
+
+    await runtime.playAudio('wav');
+    assert.equal(played.length,2);
+    assert.equal(played[1].src,files[1].data);
+    assert.equal(played[1].loop,false);
+    assert.equal(played[1].volume,.6);
+
+    const firstMusic=runtime.currentMusic;
+    assert.equal(runtime.transition(second.id),true);
+    await Promise.resolve();
+    assert.equal(firstMusic.paused,true);
+    assert.equal(runtime.currentMusic.src,files[2].data);
+    assert.equal(runtime.currentMusic.loop,true);
+
+    assert.equal(runtime.transition(silent.id),true);
+    assert.equal(runtime.currentMusic,null);
+    runtime.respawn();
+    assert.equal(runtime.currentMusic,null);
+  }finally{
+    if(originalAudio===undefined)delete globalThis.Audio;else globalThis.Audio=originalAudio;
+  }
+});
+
+test('export smoke embeds audio and restarts with scene music still active',async()=>{
+  const originalAudio=globalThis.Audio;
+  const played=[];
+  class FakeAudio{
+    constructor(src){this.src=src;this.loop=false;this.volume=1;this.currentTime=0;this.paused=true;played.push(this);}
+    async play(){this.paused=false;return true;}
+    pause(){this.paused=true;}
+    addEventListener(){}
+  }
+  globalThis.Audio=FakeAudio;
+  try{
+    const p=project(),scene=p.scenes[0];
+    scene.entities=[entity('player',32,32)];
+    scene.musicId='export-theme';
+    p.settings.volume=.7;
+    p.audio.music=[{id:'export-theme',name:'theme.mp3',mime:'audio/mpeg',bytes:3,data:'data:audio/mpeg;base64,AAA',loop:true}];
+    p.audio.effects=[{id:'export-hit',name:'hit.wav',mime:'audio/wav',bytes:3,data:'data:audio/wav;base64,BBB',loop:false}];
+    const html=await buildGameHTML(p,scene.id,fsLoader);
+    assert.ok(html.includes('data:audio/mpeg;base64,AAA'));
+    assert.ok(html.includes('data:audio/wav;base64,BBB'));
+    const source=html.slice(html.indexOf('<script>')+8,html.lastIndexOf('</script>'));
+    const handlers={},elements={},context=new Proxy({},{get:(_,key)=>key==='canvas'?elements.game:()=>{},set:()=>true});
+    for(const id of ['game','start','begin','pause','restart','status'])elements[id]={hidden:false,getContext:()=>context,focus(){}};
+    let tick;
+    const vmContext={document:{getElementById:id=>elements[id]},navigator:{getGamepads:()=>[]},addEventListener:(name,fn)=>handlers[name]=fn,requestAnimationFrame:fn=>{tick=fn;},console,Audio:FakeAudio};
+    vm.runInNewContext(source,vmContext);
+    await elements.begin.onclick();
+    assert.equal(elements.start.hidden,true);
+    assert.equal(played.length,1);
+    assert.equal(played[0].src,'data:audio/mpeg;base64,AAA');
+    assert.equal(played[0].loop,true);
+    assert.equal(played[0].volume,.7);
+    await elements.restart.onclick();
+    assert.equal(played.length,2);
+    assert.equal(played[1].src,'data:audio/mpeg;base64,AAA');
+    assert.equal(played[1].loop,true);
+    tick?.(16);
+  }finally{
+    if(originalAudio===undefined)delete globalThis.Audio;else globalThis.Audio=originalAudio;
+  }
 });
