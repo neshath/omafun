@@ -83,10 +83,10 @@ for(const format of ['platformer','topdown','2.5d',...Object.keys(gardenPacks)])
   assert.ok(html.includes('&lt;/script&gt;'));assert.equal((html.match(/<script>/g)||[]).length,1);
   const source=html.match(/<script>([\s\S]*)<\/script>/)[1];new vm.Script(source);
   const handlers={},elements={};const context=new Proxy({},{get:(_,key)=>key==='canvas'?elements.game:()=>{},set:()=>true});
-  for(const id of ['game','start','begin','pause','restart','status'])elements[id]={getContext:()=>context,focus(){}};
+  for(const id of ['game','start','begin','pause','restart','mute','status']){const el={getContext:()=>context,focus(){},attrs:{},setAttribute(k,v){this.attrs[k]=v},getAttribute(k){return this.attrs[k]}};elements[id]=el;}
   let tick;vm.runInNewContext(source,{document:{getElementById:id=>elements[id]},navigator:{getGamepads:()=>[]},addEventListener:(name,fn)=>handlers[name]=fn,requestAnimationFrame:fn=>{tick=fn;},console});
   await elements.begin.onclick();assert.equal(elements.start.hidden,true);assert.equal(elements.status.textContent,undefined);
-  tick(16);handlers.keydown({key:'Escape',preventDefault(){}});tick(32);elements.restart.onclick();tick(48);
+  tick(16);handlers.keydown({key:'Escape',preventDefault(){}});tick(32);elements.mute.onclick();assert.equal(elements.mute.textContent,'🔇 Unmute');assert.equal(elements.mute.getAttribute?.('aria-pressed'),'true');elements.restart.onclick();tick(48);
   assert.equal(elements.game.width,p.scenes[0].camera.w);
 });
 test('recursive optional sources, duplicate local declarations and aliased exports',async()=>{

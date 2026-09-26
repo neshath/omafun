@@ -36,7 +36,7 @@ const pixelForge = {
   workflow: ["Draw", "Place", "Configure", "Playtest", "Export"],
   storage: "Local-first · portable .pixel.json projects",
   style: "Tactile 1990s workstation with original pixel motifs",
-  currentFocus: "Audio v1 and Omarchy validation",
+  currentFocus: "Audio reliability and Omarchy validation",
   funFact: "Every visible tool is meant to do something."
 };
 ```
@@ -48,7 +48,7 @@ const pixelForge = {
 | **World building** | Paint, erase, fill, draw rectangles and lines, eyedrop tiles, pan, zoom, show grids, edit collisions, and compose camera bounds. |
 | **Scenes and layers** | Create, duplicate, rename, reorder, lock, hide, and delete scenes and layers. Configure game formats, environments, and HUD settings. |
 | **Entities** | Place players, enemies, gems, health, checkpoints, doors, platforms, bosses, NPCs, triggers, hazards, emitters, and other supported objects. |
-| **Gameplay** | Move, jump, attack, collect items, take damage, respawn at checkpoints, open doors, pause, restart, and complete stages. |
+| **Gameplay** | Move, jump, attack, collect items, take damage, respawn at checkpoints, open doors, pause, restart, mute or unmute audio, and complete stages. |
 | **Sprites** | Draw 8/16/24/32/64 px sprites, edit palettes, duplicate frames, set timing, use onion skinning, preview loop/ping-pong/one-shot animation, and import/export PNG sheets. |
 | **Audio v1** | Import sound effects and music, preview them, toggle looping per asset, and delete assets with undo support. |
 | **Logic** | Create visual event rules for switches, doors, dialogue, scenes, camera changes, sounds, messages, animation, items, checkpoints, and boss phases. |
@@ -89,6 +89,9 @@ The first audio slice is deliberately small and portable:
 - Import one or multiple music files.
 - Preview imported files with native audio controls.
 - Toggle looping per asset; music is enabled for looping by default.
+- Assign music to scenes and trigger sounds through visual logic rules.
+- Play audio during editor playtests and in exported standalone HTML games.
+- Mute or unmute all active and future runtime audio from the gameplay screen.
 - Delete assets with undo support.
 - Store audio inside the project JSON for portability.
 
@@ -96,8 +99,8 @@ Limits for this first slice:
 
 - **4 MB** maximum per audio file.
 - **8 MB** maximum audio library per project.
-- Audio is not yet triggered by gameplay events.
-- Runtime music and sound playback in exported HTML games are planned follow-up work.
+- Browser playback depends on the browser’s supported audio codecs and user-gesture autoplay rules.
+- Automated tests cover runtime audio wiring and export boot behavior; real browser codec playback still needs manual smoke validation.
 
 ## ⌘ Browser quick start
 
@@ -177,7 +180,7 @@ Run the automated suite:
 npm test
 ```
 
-The current suite contains **30 passing tests** covering:
+The current suite contains **65 automated tests** covering:
 
 - Project round trips and extended validation.
 - Invalid file rejection and storage recovery.
@@ -187,7 +190,7 @@ The current suite contains **30 passing tests** covering:
 - Export bundling and offline startup.
 - Marketplace package validation.
 - Native file bridge configuration.
-- Audio v1 asset round trips and invalid audio-data rejection.
+- Audio asset round trips, runtime lookup, scene music, export boot/restart behavior, and audio-data validation.
 
 Browser smoke checks cover editor startup, painting/history, layout controls, project workflows, the Audio tab, marketplace views, and playtest entry.
 
@@ -209,7 +212,7 @@ tests/                  model, runtime, storage, export, platform, marketplace, 
 ## ◌ Roadmap
 
 1. Validate AppImage and Arch packages on real Omarchy/Hyprland hardware.
-2. Connect imported audio to gameplay events and exported-game playback.
+2. Run real browser audio smoke tests across MP3, WAV, OGG where supported, scene switching, mute, and restart/respawn.
 3. Improve multi-selection, autotiling, slopes, animation timelines, camera editing, sprite workflows, and complete undo coverage.
 4. Add richer runtime systems: advanced enemy AI, bosses, moving platforms, particles, transitions, and more hazards.
 5. Add CI, reproducible release artifacts, release documentation, screenshots, and demo media.
