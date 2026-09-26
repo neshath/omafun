@@ -79,6 +79,8 @@ export class Runtime {
     }catch{this.notify('audio-error',{sound:value});return false;}
   }
   stopMusic(){if(this.currentMusic){this.currentMusic.pause();this.currentMusic.currentTime=0;this.activeAudio.delete(this.currentMusic);this.currentMusic.src='';this.currentMusic=null;}}
+  stopAllAudio(){for(const player of this.activeAudio){try{player.pause();player.currentTime=0;player.src='';}catch{}}this.activeAudio.clear();this.currentMusic=null;}
+  dispose(){this.stopAllAudio();try{this.audio?.close?.()}catch{}this.audio=null;this.audioReady=false;}
   async resumeAudio(){if(this.audio?.state==='suspended'){try{await this.audio.resume()}catch{}}}
   sceneMusicAsset(){
     const id=String(this.scene?.musicId||'').trim();
