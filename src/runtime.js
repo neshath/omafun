@@ -58,25 +58,30 @@ export class Runtime {
     }
     return true;
   }
-  setMuted(value){this.muted=Boolean(value);for(const player of this.activeAudio)player.muted=this.muted;}
+  setMuted(value){this.muted=Boolean(value);if(this.currentMusic)this.currentMusic.muted=this.muted;for(const player of this.activeAudio)player.muted=this.muted;}
   async playAudio(value){
     const asset=this.findAudio(value);
     if(!asset||this.project?.settings?.sound===false)return false;
+    let player=null;
     try{
       if(!this.audioReady)await this.unlockAudio();
-      const player=new Audio(asset.data);
+      player=new Audio(asset.data);
       player.preload='auto';
       player.volume=Math.max(0,Math.min(1,runtimeNumber(this.project?.settings?.volume,.25)));player.muted=this.muted;
       player.loop=Boolean(asset.loop);
+      this.activeAudio.add(player);
+      player.onended=()=>{this.activeAudio.delete(player);if(this.currentMusic===player)this.currentMusic=null;try{player.src='';}catch{}};
       if(asset.loop){
         if(this.currentMusic&&this.currentMusic!==player){this.currentMusic.pause();this.currentMusic.currentTime=0;this.activeAudio.delete(this.currentMusic);this.currentMusic.src='';}
         this.currentMusic=player;
       }
       await player.play();
       return true;
-    }catch{this.notify('audio-error',{sound:value});return false;}
+    }catch{if(player){this.activeAudio.delete(player);if(this.currentMusic===player)this.currentMusic=null;try{player.pause();player.src='';}catch{}}this.notify('audio-error',{sound:value});return false;}
   }
   stopMusic(){if(this.currentMusic){this.currentMusic.pause();this.currentMusic.currentTime=0;this.activeAudio.delete(this.currentMusic);this.currentMusic.src='';this.currentMusic=null;}}
+  stopAllAudio(){for(const player of this.activeAudio){try{player.pause();player.currentTime=0;player.src='';}catch{}}this.activeAudio.clear();this.currentMusic=null;}
+  dispose(){this.stopAllAudio();try{this.audio?.close?.()}catch{}this.audio=null;this.audioReady=false;}
   async resumeAudio(){if(this.audio?.state==='suspended'){try{await this.audio.resume()}catch{}}}
   sceneMusicAsset(){
     const id=String(this.scene?.musicId||'').trim();
