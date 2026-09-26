@@ -91,10 +91,6 @@ function comprehensiveProject(){
   s1.events=[rule];s1.hud={health:true,score:true,timer:true,lives:true,keys:true,boss:false,objective:'Reach the second scene.'};
   const player2=entity('player',16,144);const gem2=entity('gem',80,144);s2.entities.push(player2,gem2);p.scenes.push(s2);p.activeScene=0;return p;
 }
-function comprehensiveProject(){
-  const p=project();p.name='End-to-end export fixture';p.settings={sound:true,volume:.5};
-  const s1=p.scenes[0],s2=initializeScene(makeScene('Second scene'));
-  for(const s of [s1,s2]){s.width=20;s.height=12;s.camera={x:0,y:0,w:320,h:192};for(let x=0;x<s.width;x++){s.layers[1].tiles[`${x},10`]=1;s.layers[1].tiles[`${x},11`]=2;}}
   s1.entities=[];s2.entities=[];
   const player1=entity('player',16,144),switcher=entity('switch',64,144),door=entity('door',112,144),gem=entity('gem',88,144),checkpoint=entity('checkpoint',48,144),enemy=entity('enemy',176,144);
   door.locked=true;player1.spriteId='sprite-1';s1.entities.push(player1,switcher,door,gem,checkpoint,enemy);
@@ -119,7 +115,7 @@ test('comprehensive export fixture survives runtime, transition, checkpoint, ass
   r.player.x=112;r.update(1/60,new Set());assert.equal(r.scene.id,s2.id);assert.equal(r.scene.musicId,'music-2');
   const html=await buildGameHTML(p,undefined,fsLoader);
   assert.ok(html.includes('sprite-1'));assert.ok(html.includes('music-1'));assert.ok(html.includes('music-2'));assert.ok(html.includes('Second scene'));assert.ok(html.includes('🔊 Mute'));
-  const source=html.match(/<script>([\\s\\S]*)<\\/script>/)[1];new vm.Script(source);
+  const source=html.match(/<script>([\s\S]*)<\/script>/)[1];new vm.Script(source);
 });
 const fsLoader=url=>readFile(new URL(url),'utf8');
 for(const format of ['platformer','topdown','2.5d',...Object.keys(gardenPacks)])test('actual '+format+' sources bundle, compile and start offline with full project',async()=>{
