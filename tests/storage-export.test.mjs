@@ -82,7 +82,7 @@ for(const format of ['platformer','topdown','2.5d',...Object.keys(gardenPacks)])
   const requested=[];const html=await buildGameHTML(p,undefined,async url=>{requested.push(url);return fsLoader(url);});
   assert.ok(requested.some(url=>url.endsWith('/runtime.js')));assert.equal(new Set(requested).size,requested.length);
   assert.ok(html.includes('&lt;/script&gt;'));assert.equal((html.match(/<script>/g)||[]).length,1);
-    const source=html.match(/<script>([\s\S]*)<\/script>/)[1];
+    const source=html.slice(html.indexOf('<script>')+8,html.lastIndexOf('</script>'));
   const handlers={},elements={};const context=new Proxy({},{get:(_,key)=>key==='canvas'?elements.game:()=>{},set:()=>true});
   for(const id of ['game','start','begin','pause','restart','status'])elements[id]={getContext:()=>context,focus(){}};
   let tick;vm.runInNewContext(source,{document:{getElementById:id=>elements[id]},navigator:{getGamepads:()=>[]},addEventListener:(name,fn)=>handlers[name]=fn,requestAnimationFrame:fn=>{tick=fn;},console});
