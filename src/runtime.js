@@ -42,14 +42,21 @@ export class Runtime {
     return this.audioAssets().find(a=>String(a.id).toLowerCase()===id||String(a.name).toLowerCase()===id)||null;
   }
   async unlockAudio(){
-    if(!globalThis.AudioContext&&!globalThis.webkitAudioContext){this.audioReady=true;return;}
+    // HTMLAudioElement is the actual playback path. Start scene music from the
+    // user gesture before awaiting AudioContext.resume(), otherwise browsers
+    // can reject playback as autoplay because the gesture has been consumed.
+    this.audioReady=true;
+    const sceneMusic=this.sceneMusicAsset();
+    if(sceneMusic)this.playAudio(sceneMusic.id);
     const Ctx=globalThis.AudioContext||globalThis.webkitAudioContext;
+    if(!Ctx)return true;
     try{
       if(!this.audio)this.audio=new Ctx();
       if(this.audio.state==='suspended')await this.audio.resume();
-      this.audioReady=this.audio.state==='running';
-      if(this.audioReady)this.playSceneMusic();
-    }catch{this.audioReady=false;}
+    }catch{
+      // AudioContext is only an unlock helper; HTMLAudio playback can still work.
+    }
+    return true;
   }
   async playAudio(value){
     const asset=this.findAudio(value);
