@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {field,clearSceneReferences} from '../src/editor-panels.js';
+import {field,clearSceneReferences,removeEntityRules} from '../src/editor-panels.js';
 test('multiline fields preserve the read-only textarea type and commit text',()=>{
  const original=globalThis.document;
  globalThis.document={createElement(tag){
@@ -26,4 +26,19 @@ test('deleting a scene clears entity and visual-logic references to it',()=>{
  assert.equal(project.scenes[0].events[0].targetId,'');
  assert.equal(project.scenes[1].entities[0].targetScene,'scene-a');
  assert.equal(project.scenes[1].events[0].targetId,'scene-b');
+});
+
+test('deleting an entity removes rules that depended on its UUID',()=>{
+ const project={scenes:[
+  {entities:[],events:[
+   {sourceId:'gone',targetId:'door',action:'open'},
+   {sourceId:'other',targetId:'gone',action:'destroy'},
+   {sourceId:'other',targetId:'scene-2',action:'scene'},
+   {sourceId:'other',targetId:'door',action:'open'}
+  ]}
+ ]};
+ removeEntityRules(project,'gone');
+ assert.equal(project.scenes[0].events.length,2);
+ assert.equal(project.scenes[0].events[0].action,'scene');
+ assert.equal(project.scenes[0].events[1].targetId,'door');
 });
