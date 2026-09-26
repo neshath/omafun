@@ -177,7 +177,7 @@ test('export smoke embeds audio and restarts with scene music still active',asyn
     const html=await buildGameHTML(p,scene.id,fsLoader);
     assert.ok(html.includes('data:audio/mpeg;base64,AAA'));
     assert.ok(html.includes('data:audio/wav;base64,BBB'));
-    const source=html.match(/<script>([\\s\\S]*)<\\/script>/)[1];
+    const source=html.slice(html.indexOf('<script>')+8,html.lastIndexOf('</script>'));
     const handlers={},elements={},context=new Proxy({},{get:(_,key)=>key==='canvas'?elements.game:()=>{},set:()=>true});
     for(const id of ['game','start','begin','pause','restart','status'])elements[id]={hidden:false,getContext:()=>context,focus(){}};
     let tick;
